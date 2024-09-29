@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\Projects\task.management\Api.Server\bin\Release\net8.0\publish\</_PublishTargetUrl>
+    <History>True|2024-09-25T06:18:35.7407733Z;True|2024-09-21T07:22:35.2673716+02:00;True|2024-09-19T22:37:59.1974262+02:00;True|2024-09-14T20:18:01.1776747+02:00;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>

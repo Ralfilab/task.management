@@ -15,7 +15,7 @@ function App() {
         </main>
 
         <footer className="footer">
-          <p className="footer-text">&commat; 2024 To-Do List. All rights reserved.</p>
+          <p className="footer-text">&#64; {(new Date().getFullYear())} To-Do List. All rights reserved.</p>
         </footer>
       </div>
     );

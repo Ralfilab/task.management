@@ -43,6 +43,7 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
           {editId === item.id ? (
             <TextField
               autoFocus
+              fullWidth
               defaultValue={item.title}
               onBlur={(e) => handleEditChange(item.id, e.target.value)}
               onKeyDown={(e) => {
@@ -63,6 +64,7 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
       >
         {editId === 'add-new' ? (
           <TextField
+            fullWidth
             autoFocus
             value={newItem}
             onChange={(e) => setNewItem(e.target.value)}

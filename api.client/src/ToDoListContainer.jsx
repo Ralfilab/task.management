@@ -31,9 +31,14 @@ const ToDoListContainer = () => {
 
   const generateUniqueId = () => Date.now() + Math.random().toString(36).substr(2, 9);
 
-  const handleAddNewItem = () => {
+  const handleAddNewItem = (indexToInsert) => {
     if (newItem.trim()) {
-      const newList = [...items, { id: generateUniqueId(), title: newItem }];
+      const newList = [...items];
+
+      const newTask = { id: generateUniqueId(), title: newItem };
+
+      newList.splice(indexToInsert, 0, newTask);
+
       setItems(newList);
       localStorage.setItem(storageKey, JSON.stringify(newList));
       setNewItem('');

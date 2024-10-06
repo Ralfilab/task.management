@@ -28,6 +28,29 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
   return (
     <>
     <List ref={listRef}>
+      <ListItem
+        draggable
+        onDragStart={(e) => handleDragStart(e, items.length)}
+        onDrop={(e) => handleDrop(e, items.length)}
+        onDragOver={handleDragOver}
+        style={itemStyle}
+      >
+        {editId === 'add-new-top' ? (
+          <TextField
+            fullWidth            
+            value={newItem}
+            onChange={(e) => setNewItem(e.target.value)}
+            onBlur={() => handleAddNewItem(0)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleAddNewItem(0);
+            }}
+          />
+        ) : (
+          <IconButton onClick={() => setEditId('add-new-top')}>
+            <AddTaskIcon />
+          </IconButton>
+        )}
+      </ListItem>
       {items.map((item, index) => (
         <ListItem
           key={item.id}
@@ -55,30 +78,32 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
           )}          
         </ListItem>
       ))}
-      <ListItem
-        draggable
-        onDragStart={(e) => handleDragStart(e, items.length)}
-        onDrop={(e) => handleDrop(e, items.length)}
-        onDragOver={handleDragOver}
-        style={itemStyle}
-      >
-        {editId === 'add-new' ? (
-          <TextField
-            fullWidth
-            autoFocus
-            value={newItem}
-            onChange={(e) => setNewItem(e.target.value)}
-            onBlur={handleAddNewItem}            
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') handleAddNewItem();
-            }}
-          />
-        ) : (            
-          <IconButton onClick={() => setEditId('add-new')}>
-            <AddTaskIcon />
-          </IconButton>          
-        )}
-      </ListItem>
+      { items.length > 0 && (
+        <ListItem
+          draggable
+          onDragStart={(e) => handleDragStart(e, items.length)}
+          onDrop={(e) => handleDrop(e, items.length)}
+          onDragOver={handleDragOver}
+          style={itemStyle}
+          >          
+          {editId === 'add-new-bottom' ? (
+            <TextField
+              fullWidth
+              autoFocus
+              value={newItem}
+              onChange={(e) => setNewItem(e.target.value)}
+              onBlur={() => handleAddNewItem(items.length)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleAddNewItem(items.length);
+              }}
+            />
+          ) : (            
+                <IconButton onClick={() => setEditId('add-new-bottom')}>
+              <AddTaskIcon />
+            </IconButton>          
+          )}
+        </ListItem>
+      )}
     </List>
     <Snackbar
       open={alertOpen}

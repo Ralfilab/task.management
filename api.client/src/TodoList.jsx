@@ -3,6 +3,7 @@ import React, { useRef } from 'react';
 import { TextField, List, ListItem, IconButton, Typography, Alert, Snackbar } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
 import AddTaskIcon from '@mui/icons-material/AddTask';
+import { Modal, Box, useMediaQuery, useTheme } from '@mui/material';
 
 // Styles
 const itemStyle = { marginBottom: 8, padding: 8, border: '1px solid #ddd', borderRadius: 4, display: 'flex', alignItems: 'center' };
@@ -10,6 +11,25 @@ const itemStyle = { marginBottom: 8, padding: 8, border: '1px solid #ddd', borde
 const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, handleAlertClose,
   handleAddNewItem, handleEditChange, handleDeleteItem, reorderItems }) => {  
   const listRef = useRef(null);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const modalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: isMobile ? '50%' : '70%',
+    transform: 'translate(-50%, -50%)',
+    width: isMobile ? '100%' : '30%',
+    height: isMobile ? '100%' : 'auto',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+  };
+
+  const open = true;
+
+  const handleClose = () => {};
     
   const handleDragStart = (e, index) => {
     e.dataTransfer.setData('text/plain', index);
@@ -105,6 +125,21 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
         </ListItem>
       )}
     </List>
+
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="responsive-modal-title"
+      aria-describedby="responsive-modal-description"
+    >
+      <Box sx={modalStyle}>
+        <h2 id="responsive-modal-title">Responsive Modal</h2>
+        <p id="responsive-modal-description">
+          This modal is full screen on mobile and tablets, but 30% width on larger screens.
+        </p>
+      </Box>
+    </Modal>
+
     <Snackbar
       open={alertOpen}
       autoHideDuration={3000}

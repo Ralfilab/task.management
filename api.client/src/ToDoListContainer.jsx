@@ -4,11 +4,13 @@ import ToDoList from './ToDoList';
 const ToDoListContainer = () => {
   const storageKey = "wickedToDoList";
 
+  const generateUniqueId = () => Date.now() + Math.random().toString(36).substr(2, 9);
+
   const getLocalStorageList = () => {
     const saved = localStorage.getItem(storageKey);
 
     if (!saved) {
-      return [{ id: '1', title: 'Sample Item' }];
+      return [{ id: generateUniqueId(), title: 'Sample Item' }];
     }
 
     const initialValue = JSON.parse(saved);
@@ -27,9 +29,7 @@ const ToDoListContainer = () => {
       return;
     }
     setAlertOpen(false);
-  };
-
-  const generateUniqueId = () => Date.now() + Math.random().toString(36).substr(2, 9);
+  };  
 
   const handleAddNewItem = (indexToInsert) => {
     if (newItem.trim()) {

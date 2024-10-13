@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ToDoList from './ToDoList';
+import TaskDetailsPopup from './TaskDetailsPopup';
 
 const ToDoListContainer = () => {
   const storageKey = "wickedToDoList";
@@ -21,6 +22,10 @@ const ToDoListContainer = () => {
 
   const [editId, setEditId] = useState(null);
   const [newItem, setNewItem] = useState('');
+  
+  const [itemPopupOpen, setItemPopupOpen] = useState(false);
+  const [itemPopupTitle, setItemPopupTitle] = useState(null);
+  const [itemPopupDescription, setItemPopupDescription] = useState(null);
 
   const [alertOpen, setAlertOpen] = useState(false);  
 
@@ -29,7 +34,7 @@ const ToDoListContainer = () => {
       return;
     }
     setAlertOpen(false);
-  };  
+  };
 
   const handleAddNewItem = (indexToInsert) => {
     if (newItem.trim()) {
@@ -72,10 +77,32 @@ const ToDoListContainer = () => {
     }
   }
 
-  return <ToDoList items={items} editId={editId} setEditId={setEditId} newItem={newItem} setNewItem={setNewItem}
-    alertOpen={alertOpen} handleAlertClose={handleAlertClose}
-    handleAddNewItem={handleAddNewItem} handleEditChange={handleEditChange}
-    handleDeleteItem={handleDeleteItem} reorderItems={reorderItems} />
+  const openTaskDetailsPopup = (id) => {    
+    const item = items.find(x => x.id === id);
+
+    if (item === null) {
+      throw `Item with id: ${id} not found!`;
+    }
+
+    // https://npmtrends.com/@editorjs/editorjs-vs-ckeditor5-vs-draft-js-vs-froala-editor-vs-prosemirror-model-vs-quill-vs-slate-vs-tinymce-vs-tiptap
+
+    setItemPopupOpen(true);
+    setItemPopupTitle(item.title);
+    setItemPopupDescription(item.description);
+  }
+
+  return (
+    <>
+      <ToDoList items={items} editId={editId} setEditId={setEditId} newItem={newItem} setNewItem={setNewItem}
+        alertOpen={alertOpen} handleAlertClose={handleAlertClose}
+        handleAddNewItem={handleAddNewItem} handleEditChange={handleEditChange}
+        handleDeleteItem={handleDeleteItem} reorderItems={reorderItems}
+        openTaskDetailsPopup={openTaskDetailsPopup} />            
+
+      <TaskDetailsPopup open={itemPopupOpen} title={itemPopupTitle}
+        description={itemPopupDescription} />     
+    </>
+  );
 };
 
 export default ToDoListContainer;

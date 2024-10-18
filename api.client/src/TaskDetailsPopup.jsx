@@ -47,11 +47,9 @@ const TaskDetailsPopup = ({ open, title, description, handleClose }) => {
         </IconButton>
       </DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          <div style={{ width: 500, height: 300 }}>
-            <div ref={quillRef} />
-          </div>    
-        </DialogContentText>        
+        <div style={{ width: 500, height: 300 }}>
+          <div ref={quillRef} />
+        </div>    
       </DialogContent>      
     </Dialog>    
   );

@@ -91,16 +91,22 @@ const ToDoListContainer = () => {
     setItemPopupDescription(item.description);
   }
 
+  const itemPopupHandleClose = () => {
+    setItemPopupOpen(false);
+    setItemPopupTitle(null);
+    setItemPopupDescription(null);
+  }
+
   return (
     <>
       <ToDoList items={items} editId={editId} setEditId={setEditId} newItem={newItem} setNewItem={setNewItem}
         alertOpen={alertOpen} handleAlertClose={handleAlertClose}
         handleAddNewItem={handleAddNewItem} handleEditChange={handleEditChange}
         handleDeleteItem={handleDeleteItem} reorderItems={reorderItems}
-        openTaskDetailsPopup={openTaskDetailsPopup} />            
+        openTaskDetailsPopup={openTaskDetailsPopup} />
 
       <TaskDetailsPopup open={itemPopupOpen} title={itemPopupTitle}
-        description={itemPopupDescription} />     
+        description={itemPopupDescription} handleClose={ itemPopupHandleClose } />     
     </>
   );
 };

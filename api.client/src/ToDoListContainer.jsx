@@ -22,7 +22,8 @@ const ToDoListContainer = () => {
 
   const [editId, setEditId] = useState(null);
   const [newItem, setNewItem] = useState('');
-  
+
+  const [itemPopupId, setItemPopupId] = useState(null);
   const [itemPopupOpen, setItemPopupOpen] = useState(false);
   const [itemPopupTitle, setItemPopupTitle] = useState(null);
   const [itemPopupDescription, setItemPopupDescription] = useState(null);
@@ -78,20 +79,23 @@ const ToDoListContainer = () => {
   }
 
   const openTaskDetailsPopup = (id) => {    
-    const item = items.find(x => x.id === id);
+    const item = getLocalStorageList().find(x => x.id === id);
 
     if (item === null) {
       throw `Item with id: ${id} not found!`;
     }
 
-    // https://npmtrends.com/@editorjs/editorjs-vs-ckeditor5-vs-draft-js-vs-froala-editor-vs-prosemirror-model-vs-quill-vs-slate-vs-tinymce-vs-tiptap
-
     setItemPopupOpen(true);
+    setItemPopupId(id);
     setItemPopupTitle(item.title);
     setItemPopupDescription(item.description);
   }
 
   const itemPopupHandleClose = () => {
+    const newList = items.map(item => item.id === itemPopupId ? { ...item, description: itemPopupDescription } : item);    
+    localStorage.setItem(storageKey, JSON.stringify(newList));
+
+    setItemPopupId(null);
     setItemPopupOpen(false);
     setItemPopupTitle(null);
     setItemPopupDescription(null);
@@ -106,7 +110,7 @@ const ToDoListContainer = () => {
         openTaskDetailsPopup={openTaskDetailsPopup} />
 
       <TaskDetailsPopup open={itemPopupOpen} title={itemPopupTitle}
-        description={itemPopupDescription} handleClose={ itemPopupHandleClose } />     
+        description={itemPopupDescription} setDescription={setItemPopupDescription} handleClose={ itemPopupHandleClose } />     
     </>
   );
 };

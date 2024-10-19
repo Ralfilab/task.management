@@ -92,8 +92,10 @@ const ToDoListContainer = () => {
   }
 
   const itemPopupHandleClose = () => {
-    const newList = items.map(item => item.id === itemPopupId ? { ...item, description: itemPopupDescription } : item);    
-    localStorage.setItem(storageKey, JSON.stringify(newList));
+    const items = getLocalStorageList();
+    const item = items.find(x => x.id === itemPopupId);
+    item.description = itemPopupDescription;    
+    localStorage.setItem(storageKey, JSON.stringify(items));
 
     setItemPopupId(null);
     setItemPopupOpen(false);

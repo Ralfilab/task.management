@@ -2,37 +2,25 @@ import React from 'react';
 import {
   Dialog, 
   DialogContent,
-  DialogTitle, IconButton
+  DialogTitle, IconButton,
+  useMediaQuery, useTheme
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 
-const TaskDetailsPopup = ({ open, title, description, setDescription, handleClose }) => {
-    //const theme = useTheme();
-  //const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  //const modalStyle = {
-  //  position: 'absolute',
-  //  top: '50%',
-  //  left: isMobile ? '50%' : '70%',
-  //  transform: 'translate(-50%, -50%)',
-  //  width: isMobile ? '100%' : '30%',
-  //  height: isMobile ? '100%' : 'auto',
-  //  bgcolor: 'background.paper',
-  //  boxShadow: 24,
-  //  p: 4,
-  //};
 
-  //return (
-  //  <div style={{ width: 500, height: 300 }}>
-  //    <div ref={quillRef} />
-  //  </div>
-  //);
+const TaskDetailsPopup = ({ open, title, description, setDescription, handleClose }) => {
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));  
 
   return (
     <Dialog
+      fullScreen={isSmallScreen}
+      fullWidth
+      maxWidth="md"      
       open={open}
-      onClose={handleClose}
+      onClose={handleClose}      
     >
       <DialogTitle>        
         {title}
@@ -49,8 +37,9 @@ const TaskDetailsPopup = ({ open, title, description, setDescription, handleClos
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-      <DialogContent>
-        <ReactQuill theme="snow" value={description} onChange={setDescription} />
+      <DialogContent>        
+        <ReactQuill style={{ height: '95%', width: '100%' }}
+            theme="snow" value={description} onChange={setDescription} />        
       </DialogContent>      
     </Dialog>    
   );

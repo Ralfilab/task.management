@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 import { TextField, List, ListItem, IconButton, Typography, Alert, Snackbar } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
 import AddTaskIcon from '@mui/icons-material/AddTask';
-import DetailsIcon from '@mui/icons-material/Details';
+import EastIcon from '@mui/icons-material/East';
 
 // Styles
 const itemStyle = { marginBottom: 8, padding: 8, border: '1px solid #ddd', borderRadius: 4, display: 'flex', alignItems: 'center' };
@@ -80,7 +80,7 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
             </>
           )}
           <IconButton sx={{ justifyContent: "space-between" }} onClick={() => openTaskDetailsPopup(item.id)}>
-            <DetailsIcon />
+            <EastIcon />
           </IconButton>
         </ListItem>
       ))}

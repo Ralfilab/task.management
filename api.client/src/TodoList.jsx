@@ -38,6 +38,7 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
       >
         {editId === 'add-new-top' ? (
           <TextField
+            autoFocus
             fullWidth            
             value={newItem}
             onChange={(e) => setNewItem(e.target.value)}

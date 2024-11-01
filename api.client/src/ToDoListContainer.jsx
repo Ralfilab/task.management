@@ -11,7 +11,9 @@ const ToDoListContainer = () => {
     const saved = localStorage.getItem(storageKey);
 
     if (!saved) {
-      return [{ id: generateUniqueId(), title: 'Sample Item' }];
+      const defaultTask = [{ id: generateUniqueId(), title: 'Sample Item' }];
+      localStorage.setItem(storageKey, JSON.stringify(defaultTask));
+      return defaultTask;
     }
 
     const initialValue = JSON.parse(saved);

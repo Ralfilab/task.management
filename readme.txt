@@ -5,3 +5,18 @@ https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-aspnetcore-
 3) Setup SSL Cert
 https://www.win-acme.com/
 
+
+
+
+
+Playwright integration tests debug mode:
+
+Enable debug mode in .net env.
+$env:PWDEBUG=1
+
+Run all tests
+dotnet test
+
+Run only selected test:
+dotnet test --filter "NameOfATest"
+

@@ -50,6 +50,7 @@ const ToDoListContainer = () => {
       setItems(newList);
       localStorage.setItem(storageKey, JSON.stringify(newList));
       setNewItem('');
+      setEditId(null);
     }
     else {
       setEditId(null);

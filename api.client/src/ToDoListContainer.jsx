@@ -1,26 +1,14 @@
 import React, { useState } from 'react';
 import ToDoList from './ToDoList';
 import TaskDetailsPopup from './TaskDetailsPopup';
+import TaskRepository from './tasks/TaskRepository'
+import TaskOperations from './tasks/TaskOperations'
+
 
 const ToDoListContainer = () => {
-  const storageKey = "wickedToDoList";
+  const storageKey = "wickedToDoList";  
 
-  const generateUniqueId = () => Date.now() + Math.random().toString(36).substr(2, 9);
-
-  const getLocalStorageList = () => {
-    const saved = localStorage.getItem(storageKey);
-
-    if (!saved) {
-      const defaultTask = [{ id: generateUniqueId(), title: 'Sample Item' }];
-      localStorage.setItem(storageKey, JSON.stringify(defaultTask));
-      return defaultTask;
-    }
-
-    const initialValue = JSON.parse(saved);
-    return initialValue;
-  };
-
-  const [items, setItems] = useState(() => getLocalStorageList());
+  const [items, setItems] = useState(() => TaskRepository.getTask());
 
   const [editId, setEditId] = useState(null);
   const [newItem, setNewItem] = useState('');
@@ -43,7 +31,7 @@ const ToDoListContainer = () => {
     if (newItem.trim()) {
       const newList = [...items];
 
-      const newTask = { id: generateUniqueId(), title: newItem };
+      const newTask = { id: TaskOperations.generateUniqueId(), title: newItem };
 
       newList.splice(indexToInsert, 0, newTask);
 
@@ -82,7 +70,7 @@ const ToDoListContainer = () => {
   }
 
   const openTaskDetailsPopup = (id) => {    
-    const item = getLocalStorageList().find(x => x.id === id);
+    const item = TaskRepository.getTask().find(x => x.id === id);
 
     if (item === null) {
       throw `Item with id: ${id} not found!`;
@@ -95,7 +83,7 @@ const ToDoListContainer = () => {
   }
 
   const itemPopupHandleClose = () => {
-    const items = getLocalStorageList();
+    const items = TaskRepository.getTask();
     const item = items.find(x => x.id === itemPopupId);
     item.description = itemPopupDescription;    
     localStorage.setItem(storageKey, JSON.stringify(items));

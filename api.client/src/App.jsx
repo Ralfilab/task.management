@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Drawer, List, ListItemButton, ListItemIcon, ListItemText, CssBaseline, Box, useMediaQuery, useTheme } from '@mui/material';
-import { Home, Info, ContactMail } from '@mui/icons-material';
+import ImportExportIcon from '@mui/icons-material/ImportExport';
 import ToDoListContainer from './ToDoListContainer';
 import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
@@ -10,6 +10,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import ConfigurationPopupContainer from './configuration/ConfigurationPopupContainer';
 
 const drawerWidth = 240;
 
@@ -23,8 +24,14 @@ const StyledFab = styled(Fab)({
 });
 
 const App = () => {
+  const [configurationPopupOpen, setConfigurationPopupOpen] = useState(false);
+
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const handleConfigurationPopupClose = () => {
+    setConfigurationPopupOpen(false);
+  };
 
   const SmallScreenApp = () => {
     return (
@@ -79,23 +86,22 @@ const App = () => {
           <Toolbar />
           <Box sx={{ overflow: 'auto' }}>
             <List>
-              {['Home', 'About', 'Contact'].map((text, index) => (
-                <ListItemButton key={ text } component="a" onClick={() => alert('List item clicked!')}>
-                  <ListItemIcon>
-                    {index === 0 ? <Home /> : index === 1 ? <Info /> : <ContactMail />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItemButton>
-              ))}
+              <ListItemButton key="ConfigurationButton" component="a" onClick={() => setConfigurationPopupOpen(true)}>
+                <ListItemIcon>
+                  <ImportExportIcon />
+                </ListItemIcon>
+                <ListItemText primary="Configuration" />
+              </ListItemButton>
             </List>
           </Box>
         </Drawer>
         <Box
           component="main"
-          sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
+          sx={{ flexGrow: 1 }}
         >
           <Toolbar />
-          <ToDoListContainer />  
+          <ToDoListContainer />
+          <ConfigurationPopupContainer open={configurationPopupOpen} handleClose={handleConfigurationPopupClose} />
         </Box>
       </Box>
     );

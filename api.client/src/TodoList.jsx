@@ -30,6 +30,7 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
     <>
     <List ref={listRef}>
       <ListItem
+        key="add-new-top"
         draggable
         onDragStart={(e) => handleDragStart(e, items.length)}
         onDrop={(e) => handleDrop(e, items.length)}
@@ -87,6 +88,7 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
       ))}
       { items.length > 0 && (
         <ListItem
+          key="add-new-bottom"
           draggable
           onDragStart={(e) => handleDragStart(e, items.length)}
           onDrop={(e) => handleDrop(e, items.length)}

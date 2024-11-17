@@ -22,10 +22,7 @@ const SmallScreenTemplate = ({ children }) => {
   return (
     <React.Fragment>
       <CssBaseline />
-      <Paper square sx={{ pb: '50px' }}>
-        <Typography variant="h5" gutterBottom component="div" sx={{ p: 2, pb: 0 }}>
-          Inbox
-        </Typography>
+      <Paper square sx={{ pb: '50px' }}>        
         { children }        
       </Paper>
       <AppBar position="fixed" color="primary" sx={{ top: 'auto', bottom: 0 }}>

@@ -28,6 +28,9 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
 
   return (
     <>
+    <Typography variant="h5" gutterBottom component="div" sx={{ p: 2, pb: 0 }}>
+      Tasks
+    </Typography>
     <List ref={listRef}>
       <ListItem
         key="add-new-top"

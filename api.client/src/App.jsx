@@ -17,7 +17,7 @@ const NAVIGATION = [
 ];
 
 const BRANDING = {
-  title: 'My Toolpad Core App',
+  title: 'To-Do List',
 };
 
 export default function App() {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Typography, Box } from '@mui/material';
 import { UploadFile } from '@mui/icons-material';
 
-import TaskRepository from '../tasks/TaskRepository';
+import TaskRepository from '../../tasks/repositories/TaskRepository';
 
 const ConfigurationContainer = () => {  
   /*const theme = useTheme();*/
@@ -21,9 +21,6 @@ const ConfigurationContainer = () => {
 
   return (          
     <>
-      <Typography variant="h5" gutterBottom component="div" sx={{ p: 2, pb: 0 }}>
-        Configuration
-      </Typography>
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
         <Button
           variant="contained"

@@ -1,37 +1,29 @@
-import React from 'react';
-import { useMediaQuery, useTheme } from '@mui/material';
-import ToDoListContainer from './ToDoListContainer';
-import ConfigurationContainer from './configuration/ConfigurationContainer';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import SmallScreenApp from './pageTemplates/smallScreenTemplate';
-import LargeScreenApp from './pageTemplates/largeScreenTemplate';
+import * as React from 'react';
+import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
+import ImportExportIcon from '@mui/icons-material/ImportExport';
+import { Outlet } from 'react-router-dom';
+import { AppProvider } from '@toolpad/core/react-router-dom';
 
-const App = () => {  
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+const NAVIGATION = [  
+  {
+    title: 'Home',
+    icon: <TaskAltOutlinedIcon />,
+  },
+  {
+    segment: 'configuration',
+    title: 'Configuration',
+    icon: <ImportExportIcon />,
+  },
+];
 
+const BRANDING = {
+  title: 'My Toolpad Core App',
+};
+
+export default function App() {
   return (
-    <Router future={{
-      v7_relativeSplatPath: true,
-      v7_startTransition: true
-    }}>
-      {isSmallScreen ? (
-        <SmallScreenApp>
-          <Routes>
-            <Route path="/*" element={<ToDoListContainer />} />
-            <Route path="/config" element={<ConfigurationContainer />} />
-          </Routes>
-        </SmallScreenApp>
-      ) : (
-          <LargeScreenApp>
-            <Routes>              
-              <Route path="/*" element={<ToDoListContainer />} />              
-              <Route path="/config" element={<ConfigurationContainer />} />
-            </Routes>
-          </LargeScreenApp>
-      )}
-    </Router>
+    <AppProvider navigation={NAVIGATION} branding={BRANDING}>
+      <Outlet />
+    </AppProvider>
   );
 }
-
-export default App;

@@ -1,4 +1,4 @@
-import TaskOperations from './TaskOperations';
+import TaskOperations from '../operations/TaskOperations';
 
 class TaskRepository {
   static storageKey = 'wickedToDoList';
@@ -40,7 +40,7 @@ class TaskRepository {
       second: '2-digit'
     }).replace(/[^\d]/g, '-');
 
-    a.download = `todo_list_export_${formattedDate}.json`;    
+    a.download = `todo-list-export-${formattedDate}.json`;    
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

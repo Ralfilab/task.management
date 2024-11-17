@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import ToDoList from './ToDoList';
+import ToDoList from './TodoList';
 import TaskDetailsPopup from './TaskDetailsPopup';
-import TaskRepository from './tasks/TaskRepository'
-import TaskOperations from './tasks/TaskOperations'
-
+import TaskRepository from '../repositories/TaskRepository'
+import TaskOperations from '../operations/TaskOperations'
 
 const ToDoListContainer = () => {
   const storageKey = "wickedToDoList";  

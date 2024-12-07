@@ -7,7 +7,7 @@ class TaskRepository {
     const saved = localStorage.getItem(this.storageKey);
 
     if (!saved) {
-      const defaultTask = TaskOperations.addDefaultTasks();
+      const defaultTask = TaskOperations.getDefaultTasks();
       localStorage.setItem(this.storageKey, JSON.stringify(defaultTask));
       return defaultTask;
     }

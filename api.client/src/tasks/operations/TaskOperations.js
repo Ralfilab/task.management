@@ -1,5 +1,5 @@
  class TaskOperations {
-  static addDefaultTasks() {
+  static getDefaultTasks() {
     const defaultTasks = [{ id: this.generateUniqueId(), title: 'Sample Item' }];
     return defaultTasks;
   }

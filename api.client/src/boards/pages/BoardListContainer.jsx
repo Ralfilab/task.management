@@ -15,14 +15,10 @@ import Grid from '@mui/material/Grid2';
 import { BoardContext } from "../contexts/BoardContext";
 
 const BoardListContainer = () => {
-  const { boards, addBoard, updateBoard } = useContext(BoardContext);
+  const { boards, addBoard, updateBoard, removeBoard } = useContext(BoardContext);
   const [openDialog, setOpenDialog] = useState(false);
   const [currentBoard, setCurrentBoard] = useState(null);
   const [title, setTitle] = useState("");
-
-  const generateUniqueId = () => {
-    return Date.now() + Math.random().toString(36).substr(2, 9);
-  };
 
   const handleAddNew = () => {
     setTitle("");
@@ -30,12 +26,19 @@ const BoardListContainer = () => {
     setOpenDialog(true);
   };
 
+  const handleEdit = (item) => {
+    setTitle(item.title);
+    setCurrentBoard(item);
+    setOpenDialog(true);
+  };
+
   const handleSave = () => {
     if (currentBoard !== null) {
-      updateBoard(currentBoard, title);
+      updateBoard(currentBoard.id, title);
     } else {
-      addBoard({ id: generateUniqueId(), title });
+      addBoard(title);
     }
+    setCurrentBoard(null);
     setOpenDialog(false);
   };
 
@@ -45,8 +48,33 @@ const BoardListContainer = () => {
         Add New
       </Button>
       <Grid container spacing={2} style={{ marginTop: "20px" }}>
-        {boards.map((board, index) => (
-          <BoardCard key={board.id} board={board} index={index} />
+        {boards.map((board) => (
+          <Grid xs={12} sm={6} md={4} key={board.id}>
+            <Card
+              style={{
+                backgroundColor: "#e3f2fd",
+                border: "1px solid #90caf9",
+                borderRadius: "8px",
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" style={{ color: "#0d47a1" }}>
+                  {board.title}
+                </Typography>
+                <Typography variant="caption" color="textSecondary">
+                  ID: {board.id}
+                </Typography>
+              </CardContent>
+              <CardActions>                
+                <Button size="small" color="secondary" onClick={() => handleEdit(board)}>
+                  Edit
+                </Button>
+                <Button size="small" color="secondary" onClick={() => removeBoard(board.id)}>
+                  Remove
+                </Button>
+              </CardActions>
+            </Card>
+          </Grid>
         ))}
       </Grid>
 

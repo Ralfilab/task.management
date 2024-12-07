@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
-import { Button, Typography, Box } from '@mui/material';
+import React from 'react';
+import { Button, Box } from '@mui/material';
 import { UploadFile } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 
 import TaskRepository from '../../tasks/repositories/TaskRepository';
 
-const ConfigurationContainer = () => {  
-  /*const theme = useTheme();*/
-  // const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));  
-
+const ConfigurationContainer = () => {    
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -37,6 +35,14 @@ const ConfigurationContainer = () => {
         <Button
           component="label" onClick={() => TaskRepository.exportAllDataToFile()} >
           Export data
+        </Button>
+        <Button
+          component={Link}
+          to="/boards"
+          variant="contained"
+          color="primary"
+        >
+          Boards
         </Button>
       </Box>
     </>     

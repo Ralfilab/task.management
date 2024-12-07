@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import ImportExportIcon from '@mui/icons-material/ImportExport';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -33,7 +33,7 @@ const BRANDING = {
 };
 
 function NavigationWrapper() {
-  const { boards } = React.useContext(BoardContext); // Access context here
+  const { boards } = React.useContext(BoardContext);
   return (
     <AppProvider navigation={generateNavigation(boards)} branding={BRANDING}>
       <Outlet />

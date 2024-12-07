@@ -14,6 +14,27 @@ class TaskRepository {
 
     const initialValue = JSON.parse(saved);
     return initialValue;
+  }
+
+  static getTaskByBoardId(boardId) {
+    const saved = localStorage.getItem(this.storageKey);
+
+    if (!saved) {
+      const defaultTask = TaskOperations.getDefaultTasks();
+      localStorage.setItem(this.storageKey, JSON.stringify(defaultTask));
+      return defaultTask;
+    }
+
+    const items = JSON.parse(saved);
+
+    return items.filter(item => {
+      const test = !item.boards;
+      const test2 = item.boards && item.boards.length === 0;
+      const test3 = item.boards && item.boards.includes(boardId);
+
+      console.log(`Item name: ${item.title}, includes board prop: ${test}, length is 0: ${test2}, includes boardId: ${test3}`);
+      return !item.boards || item.boards.length === 0 || item.boards.includes(boardId)
+    });    
   }  
 
   static exportAllDataToFile() {    

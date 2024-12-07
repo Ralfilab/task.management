@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ToDoList from './TodoList';
 import TaskDetailsPopup from './TaskDetailsPopup';
 import TaskRepository from '../repositories/TaskRepository'
 import TaskOperations from '../operations/TaskOperations'
+import { useParams } from "react-router-dom";
 
 const ToDoListContainer = () => {
   const storageKey = "wickedToDoList";  
 
-  const [items, setItems] = useState(() => TaskRepository.getTask());
+  const { boardId } = useParams();  
+
+  const [items, setItems] = useState([]);
 
   const [editId, setEditId] = useState(null);
   const [newItem, setNewItem] = useState('');
@@ -19,6 +22,10 @@ const ToDoListContainer = () => {
 
   const [alertOpen, setAlertOpen] = useState(false);  
 
+  useEffect(() => {
+    setItems(TaskRepository.getTaskByBoardId(boardId));
+  }, [boardId]);
+
   const handleAlertClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -28,9 +35,8 @@ const ToDoListContainer = () => {
 
   const handleAddNewItem = (indexToInsert) => {
     if (newItem.trim()) {
-      const newList = [...items];
-
-      const newTask = { id: TaskOperations.generateUniqueId(), title: newItem };
+      const newList = [...items];      
+      const newTask = { id: TaskOperations.generateUniqueId(), title: newItem, boards: [boardId] };
 
       newList.splice(indexToInsert, 0, newTask);
 
@@ -45,7 +51,7 @@ const ToDoListContainer = () => {
   };
 
   const handleEditChange = (id, title) => {
-    const newList = items.map(item => item.id === id ? { ...item, title } : item);
+    const newList = items.map(item => item.id === id ? { ...item, title, boards: [boardId] } : item);
     setItems(newList);
     localStorage.setItem(storageKey, JSON.stringify(newList));
     setEditId(null);
@@ -69,7 +75,7 @@ const ToDoListContainer = () => {
   }
 
   const openTaskDetailsPopup = (id) => {    
-    const item = TaskRepository.getTask().find(x => x.id === id);
+    const item = TaskRepository.getTaskByBoardId(boardId).find(x => x.id === id);
 
     if (item === null) {
       throw `Item with id: ${id} not found!`;
@@ -82,7 +88,7 @@ const ToDoListContainer = () => {
   }
 
   const itemPopupHandleClose = () => {
-    const items = TaskRepository.getTask();
+    const items = TaskRepository.getTaskByBoardId(boardId);
     const item = items.find(x => x.id === itemPopupId);
     item.description = itemPopupDescription;    
     localStorage.setItem(storageKey, JSON.stringify(items));

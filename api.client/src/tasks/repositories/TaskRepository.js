@@ -16,6 +16,36 @@ class TaskRepository {
     return initialValue;
   }
 
+  static save(items) {
+    localStorage.setItem(this.storageKey, JSON.stringify(items));
+  }
+
+  static mergeAndSave(items) {    
+    const mergedItems = this.mergeArraysWithOrder(this.getTask(), items);
+
+    localStorage.setItem(this.storageKey, JSON.stringify(mergedItems));
+  }
+
+  static mergeArraysWithOrder(array1, array2) {
+    // Step 1: Remove objects from array1 that have matching id in array2
+    array1 = array1.filter(item1 => !array2.some(item2 => item2.id === item1.id));
+
+    // Step 2: Add remaining elements from array1 to array2
+    array2 = array2.concat(array1);
+
+    return array2;
+  }
+
+  static deleteTasksByBoardId(boardId) {
+    let items = this.getTask();
+
+    items = items.filter(item => {
+      return !item.boards || item.boards.length === 0 || !item.boards.includes(boardId)
+    })
+
+    localStorage.setItem(this.storageKey, JSON.stringify(items));
+  }
+
   static getTaskByBoardId(boardId) {
     const saved = localStorage.getItem(this.storageKey);
 
@@ -27,52 +57,10 @@ class TaskRepository {
 
     const items = JSON.parse(saved);
 
-    return items.filter(item => {
-      const test = !item.boards;
-      const test2 = item.boards && item.boards.length === 0;
-      const test3 = item.boards && item.boards.includes(boardId);
-
-      console.log(`Item name: ${item.title}, includes board prop: ${test}, length is 0: ${test2}, includes boardId: ${test3}`);
+    return items.filter(item => {            
       return !item.boards || item.boards.length === 0 || item.boards.includes(boardId)
     });    
   }  
-
-  static exportAllDataToFile() {    
-    const tasks = this.getTask();
-
-    const exportData = {
-      defaultTasks: tasks,
-      configuration: {}
-    }
-
-    const jsonData = JSON.stringify(exportData);
-    const blob = new Blob([jsonData], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-
-    const now = new Date();
-    const formattedDate = now.toLocaleString('pl-PL', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    }).replace(/[^\d]/g, '-');
-
-    a.download = `todo-list-export-${formattedDate}.json`;    
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);    
-  }
-
-  static importAllData(stringData)
-  {
-    const data = JSON.parse(stringData);
-    localStorage.setItem(this.storageKey, JSON.stringify(data.defaultTasks));
-  }
 }
 
 export default TaskRepository;

@@ -17,8 +17,8 @@ const generateNavigation = (boards) => [
     segment: "boards",
     icon: <DashboardIcon />,
     children: boards.map((board) => ({
-      title: board.title,            // Board title displayed in the menu
-      segment: `${board.id}`,  // Dynamic segment for navigation
+      title: board.title,
+      segment: `${board.id}`,
     })),
   },
   {

@@ -1,6 +1,7 @@
 import React, { createContext, useState } from "react";
 import BoardRepository from '../repositories/BoardRepository'
 import BoardOperations from '../operations/BoardOperations'
+import TaskRepository from '../../tasks/repositories/TaskRepository'
 
 export const BoardContext = createContext();
 
@@ -13,6 +14,7 @@ export const BoardProvider = ({ children }) => {
     const newItem = { id: BoardOperations.generateUniqueId(), title: title };
     const newItems = [...items, newItem];    
     setItems(newItems);    
+    BoardRepository.save(newItems);
   };
 
   const updateBoard = (id, updatedTitle) => {
@@ -29,12 +31,13 @@ export const BoardProvider = ({ children }) => {
     setItems((prevBoards) => {
       const newItems = prevBoards.filter((board) => board.id !== id);
       BoardRepository.save(newItems);
+      TaskRepository.deleteTasksByBoardId(id);
       return newItems;
     }); 
-  };
+  };  
 
   return (
-    <BoardContext.Provider value={{ boards: items, addBoard, updateBoard, removeBoard }}>
+    <BoardContext.Provider value={{ boards: items, addBoard, updateBoard, removeBoard, import: setItems  }}>
       {children}
     </BoardContext.Provider>
   );

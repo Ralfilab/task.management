@@ -102,37 +102,4 @@ const BoardListContainer = () => {
   );
 };
 
-const BoardCard = ({ board, index }) => {
-  const { handleEdit, handleRemove } = useContext(BoardContext);
-
-  return (
-    <Grid xs={12} sm={6} md={4}>
-      <Card
-        style={{
-          backgroundColor: "#e3f2fd",
-          border: "1px solid #90caf9",
-          borderRadius: "8px",
-        }}
-      >
-        <CardContent>
-          <Typography variant="h6" style={{ color: "#0d47a1" }}>
-            {board.title}
-          </Typography>
-          <Typography variant="caption" color="textSecondary">
-            ID: {board.id}
-          </Typography>
-        </CardContent>
-        <CardActions>
-          <Button size="small" color="primary" onClick={() => handleEdit(index)}>
-            Edit
-          </Button>
-          <Button size="small" color="secondary" onClick={() => handleRemove(index)}>
-            Remove
-          </Button>
-        </CardActions>
-      </Card>
-    </Grid>
-  );
-};
-
 export default BoardListContainer;

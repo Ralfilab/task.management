@@ -19,6 +19,16 @@ class BoardRepository {
   static save(items) {
     localStorage.setItem(this.storageKey, JSON.stringify(items));
   }
+
+  static getDefaultBoard() {
+    const items = this.get()
+
+    if (items.length === 0) {
+      throw new Error("Oooops. No boards found! You must add a new board! Go to /boards");
+    }
+
+    return items[0];
+  }
 }
 
 export default BoardRepository;

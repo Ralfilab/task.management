@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 const ToDoListContainer = () => {
   const storageKey = "wickedToDoList";  
 
-  const { boardId } = useParams();  
+  let { boardId } = useParams();  
 
   const [items, setItems] = useState([]);
 
@@ -41,7 +41,7 @@ const ToDoListContainer = () => {
       newList.splice(indexToInsert, 0, newTask);
 
       setItems(newList);
-      localStorage.setItem(storageKey, JSON.stringify(newList));
+      TaskRepository.mergeAndSave(newList);
       setNewItem('');
       setEditId(null);
     }
@@ -53,14 +53,14 @@ const ToDoListContainer = () => {
   const handleEditChange = (id, title) => {
     const newList = items.map(item => item.id === id ? { ...item, title, boards: [boardId] } : item);
     setItems(newList);
-    localStorage.setItem(storageKey, JSON.stringify(newList));
+    TaskRepository.mergeAndSave(newList);
     setEditId(null);
   };
 
   const handleDeleteItem = (id) => {
     const newList = items.filter(item => item.id !== id);
     setItems(newList);
-    localStorage.setItem(storageKey, JSON.stringify(newList));
+    TaskRepository.mergeAndSave(newList);
     setAlertOpen(true);
   };
 
@@ -70,7 +70,7 @@ const ToDoListContainer = () => {
       const [movedItem] = reorderedItems.splice(draggedIndex, 1);
       reorderedItems.splice(index, 0, movedItem);
       setItems(reorderedItems);
-      localStorage.setItem(storageKey, JSON.stringify(reorderedItems));
+      TaskRepository.mergeAndSave(reorderedItems);
     }
   }
 
@@ -91,7 +91,7 @@ const ToDoListContainer = () => {
     const items = TaskRepository.getTaskByBoardId(boardId);
     const item = items.find(x => x.id === itemPopupId);
     item.description = itemPopupDescription;    
-    localStorage.setItem(storageKey, JSON.stringify(items));
+    TaskRepository.mergeAndSave(items);
 
     setItemPopupId(null);
     setItemPopupOpen(false);

@@ -3,7 +3,7 @@ import { Button, Box } from '@mui/material';
 import { UploadFile } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
-import TaskRepository from '../../tasks/repositories/TaskRepository';
+import ConfigurationRepository from '../repositories/ConfigurationRepository';
 
 const ConfigurationContainer = () => {    
   const handleFileChange = (event) => {
@@ -11,7 +11,7 @@ const ConfigurationContainer = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        TaskRepository.importAllData(e.target.result);                
+        ConfigurationRepository.importAllData(e.target.result);                
       };
       reader.readAsText(file);
     }
@@ -33,7 +33,7 @@ const ConfigurationContainer = () => {
           />
         </Button>      
         <Button
-          component="label" onClick={() => TaskRepository.exportAllDataToFile()} >
+          component="label" onClick={() => ConfigurationRepository.exportAllDataToFile()} >
           Export data
         </Button>
         <Button

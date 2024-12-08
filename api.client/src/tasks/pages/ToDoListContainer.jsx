@@ -60,7 +60,7 @@ const ToDoListContainer = () => {
   const handleDeleteItem = (id) => {
     const newList = items.filter(item => item.id !== id);
     setItems(newList);
-    TaskRepository.mergeAndSave(newList);
+    TaskRepository.delete(id);
     setAlertOpen(true);
   };
 

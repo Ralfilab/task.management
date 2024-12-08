@@ -26,6 +26,11 @@ class TaskRepository {
     localStorage.setItem(this.storageKey, JSON.stringify(mergedItems));
   }
 
+  static delete(id) {
+    const newList = this.getTask().filter(item => item.id !== id);
+    localStorage.setItem(this.storageKey, JSON.stringify(newList));
+  }
+
   static mergeArraysWithOrder(array1, array2) {
     // Step 1: Remove objects from array1 that have matching id in array2
     array1 = array1.filter(item1 => !array2.some(item2 => item2.id === item1.id));

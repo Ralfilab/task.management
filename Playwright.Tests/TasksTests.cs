@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
+using static System.Net.WebRequestMethods;
 
 namespace PlaywrightTests;
 
@@ -8,12 +9,18 @@ namespace PlaywrightTests;
 [TestFixture]
 public class TasksTests : PageTest
 {
-    private static string siteUrl = "https://localhost:5173";
+    private string siteUrl;
     private static string defaultTaskName = "Sample Item";
+
+    [SetUp]
+    public void SetUp()
+    {
+        siteUrl = Environment.GetEnvironmentVariable("TaskManagementIntegrationTestsSiteUrl") ?? "https://localhost:5173";
+    }
 
     [Test]
     public async Task HasTitle()
-    {
+    {        
         await Page.GotoAsync(siteUrl);
 
         // Expect a title "to contain" a substring.

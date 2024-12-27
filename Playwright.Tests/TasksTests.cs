@@ -15,7 +15,9 @@ public class TasksTests : PageTest
     [SetUp]
     public void SetUp()
     {
-        siteUrl = Environment.GetEnvironmentVariable("TaskManagementIntegrationTestsSiteUrl") ?? "https://localhost:5173";
+        siteUrl = 
+            Environment.GetEnvironmentVariable("TaskManagementIntegrationTestsSiteUrl", EnvironmentVariableTarget.User) 
+            ?? "https://localhost:5173";
     }
 
     [Test]

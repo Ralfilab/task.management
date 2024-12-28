@@ -1,7 +1,6 @@
 using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
-using static System.Net.WebRequestMethods;
 
 namespace PlaywrightTests;
 
@@ -9,20 +8,12 @@ namespace PlaywrightTests;
 [TestFixture]
 public class TasksTests : PageTest
 {
-    private string siteUrl;
-    private static string defaultTaskName = "Sample Item";
-
-    [SetUp]
-    public void SetUp()
-    {
-        siteUrl = 
-            Environment.GetEnvironmentVariable("TaskManagementIntegrationTestsSiteUrl", EnvironmentVariableTarget.Machine) 
-            ?? "https://localhost:5173";
-    }
-
+    private string siteUrl = TestContext.Parameters.Get("webAppUrl", "Web app url not found!");
+    private static string defaultTaskName = "Sample Item";    
+     
     [Test]
     public async Task HasTitle()
-    {        
+    {
         await Page.GotoAsync(siteUrl);
 
         // Expect a title "to contain" a substring.
@@ -45,11 +36,12 @@ public class TasksTests : PageTest
 
         await Page.GotoAsync(siteUrl);        
 
-        await Page.GetByRole(AriaRole.Button).First.ClickAsync();
-        await Page.GetByRole(AriaRole.Textbox).FillAsync(givenNewTaskName);        
-        await Page.GetByRole(AriaRole.Textbox).PressAsync("Enter");
+        await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Button).First.ClickAsync();
+        await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Textbox).ClickAsync();
+        await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Textbox).FillAsync(givenNewTaskName);        
+        await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Textbox).PressAsync("Enter");
         await Page.GetByRole(AriaRole.Main).ClickAsync();
-        await Expect(Page.GetByText(givenNewTaskName)).ToBeVisibleAsync();        
+        await Expect(Page.GetByText(givenNewTaskName)).ToBeVisibleAsync();
     }
 
     [Test]
@@ -74,7 +66,7 @@ public class TasksTests : PageTest
 
         await Page.GotoAsync(siteUrl);
 
-        await Page.GetByRole(AriaRole.Button).Nth(2).ClickAsync();        
+        await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Button).Nth(2).ClickAsync();        
         await Page.Locator(".ql-editor").FillAsync(givenTaskDescription);
         await Expect(Page.GetByText(givenTaskDescription)).ToBeVisibleAsync();
 
@@ -82,14 +74,14 @@ public class TasksTests : PageTest
 
         await Page.GetByRole(AriaRole.Main).ClickAsync();
 
-        await Page.GetByRole(AriaRole.Button).Nth(2).ClickAsync();
+        await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Button).Nth(2).ClickAsync();
 
         await Expect(Page.GetByText(givenTaskDescription)).ToBeVisibleAsync();
     }
 
     [SetUp]
     public async Task Setup()
-    {
+    {        
         await Context.Tracing.StartAsync(new()
         {
             Title = $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}",

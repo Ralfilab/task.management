@@ -14,7 +14,7 @@ class BoardRepository {
 
     const initialValue = JSON.parse(saved);
     return initialValue;
-  } 
+  }
   
   static save(items) {
     localStorage.setItem(this.storageKey, JSON.stringify(items));

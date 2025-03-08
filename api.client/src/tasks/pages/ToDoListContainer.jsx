@@ -5,9 +5,7 @@ import TaskRepository from '../repositories/TaskRepository'
 import TaskOperations from '../operations/TaskOperations'
 import { useParams } from "react-router-dom";
 
-const ToDoListContainer = () => {
-  const storageKey = "wickedToDoList";  
-
+const ToDoListContainer = () => {  
   let { boardId } = useParams();  
 
   const [items, setItems] = useState([]);

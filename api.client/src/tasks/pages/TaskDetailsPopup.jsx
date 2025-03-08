@@ -26,10 +26,8 @@ const TaskDetailsPopup = ({ open, title, description, setDescription, handleClos
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const { boards } = React.useContext(BoardContext);
-  
-  //const [boardsError, setBoardsError] = useState(false);
-
+  const { boards } = React.useContext(BoardContext);  
+  const [boardsError, setBoardsError] = useState(false);
   const [selectedBoards, setSelectedBoards] = useState([]);
 
   const handleChange = (event) => {
@@ -37,7 +35,16 @@ const TaskDetailsPopup = ({ open, title, description, setDescription, handleClos
       target: { value },
     } = event;
     setSelectedBoards(typeof value === 'string' ? value.split(',') : value);
+    setBoardsError(value.length === 0);
   }; 
+
+  const handleSave = () => {
+    if (selectedBoards.length === 0) {
+      setBoardsError(true);
+      return;
+    }
+    handleClose();
+  };
 
   return (
     <Dialog
@@ -63,8 +70,8 @@ const TaskDetailsPopup = ({ open, title, description, setDescription, handleClos
         </IconButton>
       </DialogTitle>
 
-      <DialogContent sx={{ pl: 3, pr: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <FormControl variant="outlined" style={{ minWidth: 200 }}>
+      <DialogContent sx={{ pl: 3, pr: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>        
+        <FormControl error={boardsError} variant="outlined" style={{ minWidth: 200 }}>
           <InputLabel id="multi-select-label">Select Boards</InputLabel>
           <Select
             labelId="multi-select-label"
@@ -81,6 +88,7 @@ const TaskDetailsPopup = ({ open, title, description, setDescription, handleClos
               </MenuItem>
             ))}
           </Select>
+          {boardsError && <FormHelperText>Please select at least one board</FormHelperText>}
         </FormControl>
 
         <ReactQuill
@@ -90,7 +98,7 @@ const TaskDetailsPopup = ({ open, title, description, setDescription, handleClos
           style={{ height: '100%', width: '100%' }}
         />
 
-        <Button variant="contained" color="primary">
+        <Button variant="contained" color="primary" onClick={handleSave}>
           Save
         </Button>
       </DialogContent>

@@ -36,7 +36,7 @@ public class TasksTests : PageTest
 
         await Page.GotoAsync(siteUrl);        
 
-        await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Button).First.ClickAsync();
+        await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Button).First.ClickAsync();        
         await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Textbox).ClickAsync();
         await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Textbox).FillAsync(givenNewTaskName);        
         await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Textbox).PressAsync("Enter");
@@ -70,7 +70,7 @@ public class TasksTests : PageTest
         await Page.Locator(".ql-editor").FillAsync(givenTaskDescription);
         await Expect(Page.GetByText(givenTaskDescription)).ToBeVisibleAsync();
 
-        await Page.GetByLabel("close").ClickAsync();
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Save" }).ClickAsync();        
 
         await Page.GetByRole(AriaRole.Main).ClickAsync();
 

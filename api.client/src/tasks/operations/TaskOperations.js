@@ -1,6 +1,10 @@
- class TaskOperations {
+import BoardRepository from "../../boards/repositories/BoardRepository";
+
+class TaskOperations {
   static getDefaultTasks() {
-    const defaultTasks = [{ id: this.generateUniqueId(), title: 'Sample Item' }];
+    const defaultBoard = BoardRepository.getDefaultBoard();
+
+    const defaultTasks = [{ id: this.generateUniqueId(), title: 'Sample Item', boards: [defaultBoard.id] }];
     return defaultTasks;
   }
 

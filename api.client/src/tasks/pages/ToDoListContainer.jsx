@@ -90,8 +90,7 @@ const ToDoListContainer = () => {
   }
 
   return (
-    <>
-      {itemPopupId}
+    <>      
       <ToDoList items={items} editId={editId} setEditId={setEditId} newItem={newItem} setNewItem={setNewItem}
         alertOpen={alertOpen} handleAlertClose={handleAlertClose}
         handleAddNewItem={handleAddNewItem} handleEditChange={handleEditChange}
@@ -100,8 +99,7 @@ const ToDoListContainer = () => {
       {itemPopupId !== null && 
         <TaskDetailsPopup item={getEditedItem()}
           handleClose={itemPopupClose} loadTasks={loadTasks} />
-      }
-      
+      }      
     </>
   );
 };

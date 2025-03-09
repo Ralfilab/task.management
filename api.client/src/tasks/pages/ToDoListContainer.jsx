@@ -11,17 +11,14 @@ const ToDoListContainer = () => {
   const [items, setItems] = useState([]);
 
   const [editId, setEditId] = useState(null);
-  const [newItem, setNewItem] = useState('');
+  const [newItem, setNewItem] = useState('');  
 
-  const [itemPopupId, setItemPopupId] = useState(null);
-  const [itemPopupOpen, setItemPopupOpen] = useState(false);
-  const [itemPopupTitle, setItemPopupTitle] = useState(null);
-  const [itemPopupDescription, setItemPopupDescription] = useState(null);
+  const [itemPopupId, setItemPopupId] = useState(null);  
 
   const [alertOpen, setAlertOpen] = useState(false);  
 
   useEffect(() => {
-    setItems(TaskRepository.getTaskByBoardId(boardId));
+    loadTasks();
   }, [boardId]);
 
   const handleAlertClose = (event, reason) => {
@@ -72,41 +69,39 @@ const ToDoListContainer = () => {
     }
   }
 
-  const openTaskDetailsPopup = (id) => {    
-    const item = TaskRepository.getTaskByBoardId(boardId).find(x => x.id === id);
-
+  const getEditedItem = () => {
+    const item = TaskRepository.getTaskByBoardId(boardId).find(x => x.id === itemPopupId);
     if (item === null) {
-      throw `Item with id: ${id} not found!`;
+      throw new Error(`Can not find an item for editing inside popup, id: ${itemPopupId}`);
     }
+    return item;
+  };
 
-    setItemPopupOpen(true);
-    setItemPopupId(id);
-    setItemPopupTitle(item.title);
-    setItemPopupDescription(item.description);
+  const openTaskDetailsPopup = (id) => {
+    setItemPopupId(id);     
   }
 
-  const itemPopupHandleClose = () => {
-    const items = TaskRepository.getTaskByBoardId(boardId);
-    const item = items.find(x => x.id === itemPopupId);
-    item.description = itemPopupDescription;    
-    TaskRepository.mergeAndSave(items);
-
+  const itemPopupClose = () => {
     setItemPopupId(null);
-    setItemPopupOpen(false);
-    setItemPopupTitle(null);
-    setItemPopupDescription(null);
+  }
+
+  const loadTasks = () => {    
+    setItems(TaskRepository.getTaskByBoardId(boardId));    
   }
 
   return (
     <>
+      {itemPopupId}
       <ToDoList items={items} editId={editId} setEditId={setEditId} newItem={newItem} setNewItem={setNewItem}
         alertOpen={alertOpen} handleAlertClose={handleAlertClose}
         handleAddNewItem={handleAddNewItem} handleEditChange={handleEditChange}
         handleDeleteItem={handleDeleteItem} reorderItems={reorderItems}
         openTaskDetailsPopup={openTaskDetailsPopup} />
-
-      <TaskDetailsPopup open={itemPopupOpen} title={itemPopupTitle}
-        description={itemPopupDescription} setDescription={setItemPopupDescription} handleClose={ itemPopupHandleClose } />     
+      {itemPopupId !== null && 
+        <TaskDetailsPopup item={getEditedItem()}
+          handleClose={itemPopupClose} loadTasks={loadTasks} />
+      }
+      
     </>
   );
 };

@@ -26,6 +26,16 @@ class TaskRepository {
     localStorage.setItem(this.storageKey, JSON.stringify(mergedItems));
   }
 
+  static get(id) {
+    const tasks = this.getTask().filter(item => item.id === id);
+
+    if (tasks.length !== 1) {
+      throw new Error(`Number of tasks for task id ${id} is ${tasks.length}. Expected number is one.`);
+    }
+
+    return tasks[0];
+  }
+
   static delete(id) {
     const newList = this.getTask().filter(item => item.id !== id);
     localStorage.setItem(this.storageKey, JSON.stringify(newList));

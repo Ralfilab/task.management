@@ -9,9 +9,7 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem,
-  OutlinedInput,
-  Chip,  
+  MenuItem,    
   Box,
   FormHelperText,
   Button,
@@ -21,14 +19,16 @@ import CloseIcon from '@mui/icons-material/Close';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { BoardContext } from '../../boards/contexts/BoardContext';
+import TaskRepository from '../repositories/TaskRepository'
 
-const TaskDetailsPopup = ({ open, title, description, setDescription, handleClose, selectedBoardsOptions }) => {
+const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {  
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const { boards } = React.useContext(BoardContext);  
+  const { boards } = React.useContext(BoardContext);
+  const [description, setDescription] = useState(item.description);
   const [boardsError, setBoardsError] = useState(false);
-  const [selectedBoards, setSelectedBoards] = useState([]);
+  const [selectedBoards, setSelectedBoards] = useState(item.boards);
 
   const handleChange = (event) => {
     const {
@@ -38,12 +38,21 @@ const TaskDetailsPopup = ({ open, title, description, setDescription, handleClos
     setBoardsError(value.length === 0);
   }; 
 
-  const handleSave = () => {
+  const handleSave = (id) => {
     if (selectedBoards.length === 0) {
       setBoardsError(true);
       return;
     }
+
+    var item = TaskRepository.get(id);
+    item.boards = selectedBoards;
+    item.description = description;
+
+    TaskRepository.mergeAndSave([item]);
+
     handleClose();
+
+    loadTasks();
   };
 
   return (
@@ -51,11 +60,11 @@ const TaskDetailsPopup = ({ open, title, description, setDescription, handleClos
       fullScreen={isSmallScreen}
       fullWidth
       maxWidth="md"
-      open={open}
+      open={true}
       onClose={handleClose}
     >
       <DialogTitle sx={{ pl: 3, pr: 6, display: 'flex', alignItems: 'center' }}>
-        <Box flex={1}>{title}</Box>
+        <Box flex={1}>{item.title}</Box>
         <IconButton
           aria-label="close"
           onClick={handleClose}
@@ -98,7 +107,7 @@ const TaskDetailsPopup = ({ open, title, description, setDescription, handleClos
           style={{ height: '100%', width: '100%' }}
         />
 
-        <Button variant="contained" color="primary" onClick={handleSave}>
+        <Button variant="contained" color="primary" onClick={() => handleSave(item.id)}>
           Save
         </Button>
       </DialogContent>

@@ -13,13 +13,18 @@ import {
   Box,
   FormHelperText,
   Button,
-  Checkbox, ListItemText
+  Checkbox,
+  ListItemText,
+  TextField
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { BoardContext } from '../../boards/contexts/BoardContext';
 import TaskRepository from '../repositories/TaskRepository'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {  
   const theme = useTheme();
@@ -29,6 +34,7 @@ const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {
   const [description, setDescription] = useState(item.description);
   const [boardsError, setBoardsError] = useState(false);
   const [selectedBoards, setSelectedBoards] = useState(item.boards);
+  const [completeBy, setCompleteBy] = useState(item.completeBy ? new Date(item.completeBy) : null);
 
   const handleChange = (event) => {
     const {
@@ -47,6 +53,7 @@ const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {
     var item = TaskRepository.get(id);
     item.boards = selectedBoards;
     item.description = description;
+    item.completeBy = completeBy;
 
     TaskRepository.mergeAndSave([item]);
 
@@ -99,6 +106,15 @@ const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {
           </Select>
           {boardsError && <FormHelperText>Please select at least one board</FormHelperText>}
         </FormControl>
+
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DatePicker
+            label="Complete By"
+            value={completeBy}
+            onChange={(newValue) => setCompleteBy(newValue)}
+            renderInput={(params) => <TextField {...params} fullWidth />}
+          />
+        </LocalizationProvider>
 
         <ReactQuill
           theme="snow"

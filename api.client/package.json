@@ -12,7 +12,9 @@
   "dependencies": {
     "@mui/icons-material": "^6.0.2",
     "@mui/material": "^6.0.2",
+    "@mui/x-date-pickers": "^8.2.0",
     "@toolpad/core": "^0.9.0",
+    "date-fn": "^0.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-quill-new": "^3.3.3",

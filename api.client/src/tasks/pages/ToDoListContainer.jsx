@@ -5,6 +5,8 @@ import TaskRepository from '../repositories/TaskRepository'
 import TaskOperations from '../operations/TaskOperations'
 import { useParams } from "react-router-dom";
 
+// https://copilot.microsoft.com/shares/8XCoJ7tH5UAfWePjGLDrv
+
 const ToDoListContainer = () => {  
   let { boardId } = useParams();  
 
@@ -31,7 +33,12 @@ const ToDoListContainer = () => {
   const handleAddNewItem = (indexToInsert) => {
     if (newItem.trim()) {
       const newList = [...items];      
-      const newTask = { id: TaskOperations.generateUniqueId(), title: newItem, boards: [boardId] };
+      const newTask = { 
+        id: TaskOperations.generateUniqueId(), 
+        title: newItem, 
+        boards: [boardId],
+        completeBy: null 
+      };
 
       newList.splice(indexToInsert, 0, newTask);
 

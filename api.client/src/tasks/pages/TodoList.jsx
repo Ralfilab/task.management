@@ -78,7 +78,14 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
             />
           ) : (
             <>
-              <Typography sx={{ flexGrow: 1 }} variant="body1" onClick={() => setEditId(item.id)}>{item.title}</Typography>                                          
+              <Typography sx={{ flexGrow: 1 }} variant="body1" onClick={() => setEditId(item.id)}>
+                {item.title}
+                {item.completeBy && (
+                  <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary' }}>
+                    Complete by: {new Date(item.completeBy).toLocaleDateString()}
+                  </Typography>
+                )}
+              </Typography>                                          
             </>
           )}
           <IconButton sx={{ justifyContent: "space-between" }} onClick={() => openTaskDetailsPopup(item.id)}>

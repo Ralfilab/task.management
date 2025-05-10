@@ -22,8 +22,15 @@ class TaskRepository {
 
   static mergeAndSave(items) {    
     const mergedItems = this.mergeArraysWithOrder(this.getTask(), items);
+    this.save(mergedItems);    
+  }
 
-    localStorage.setItem(this.storageKey, JSON.stringify(mergedItems));
+  static update(updateItem) {    
+    const items = this.getTask();
+    
+    const newList = items.map(item => item.id === updateItem.id ? updateItem : item);
+        
+    this.save(newList);    
   }
 
   static get(id) {

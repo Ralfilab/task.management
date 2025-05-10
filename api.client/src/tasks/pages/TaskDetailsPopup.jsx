@@ -53,9 +53,9 @@ const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {
     var item = TaskRepository.get(id);
     item.boards = selectedBoards;
     item.description = description;
-    item.completeBy = completeBy;
+    item.completeBy = completeBy;    
 
-    TaskRepository.mergeAndSave([item]);
+    TaskRepository.update(item);
 
     handleClose();
 

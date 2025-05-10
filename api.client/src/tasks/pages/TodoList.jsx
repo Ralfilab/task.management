@@ -1,16 +1,14 @@
 /* eslint-disable react/prop-types */
 import React, { useRef } from 'react';
-import { TextField, List, ListItem, IconButton, Typography, Alert, Snackbar } from '@mui/material';
+import { TextField, List, ListItem, IconButton, Typography, Alert, Snackbar, useTheme } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import EastIcon from '@mui/icons-material/East';
 
-// Styles
-const itemStyle = { marginBottom: 8, padding: 8, border: '1px solid #ddd', borderRadius: 4, display: 'flex', alignItems: 'center' };
-
 const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, handleAlertClose,
   handleAddNewItem, handleEditChange, handleDeleteItem, reorderItems, openTaskDetailsPopup }) => {  
-  const listRef = useRef(null);  
+  const listRef = useRef(null);
+  const theme = useTheme();
     
   const handleDragStart = (e, index) => {
     e.dataTransfer.setData('text/plain', index);
@@ -25,6 +23,35 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
   const handleDragOver = (e) => {
     e.preventDefault();
   };
+  
+  const itemStyle = (completeBy) => {
+    const now = new Date();
+    const completeDate = completeBy ? new Date(completeBy) : null;
+    const threeDaysBefore = completeDate ? new Date(completeDate) : null;
+    if (threeDaysBefore) {
+      threeDaysBefore.setDate(completeDate.getDate() - 3);
+    }
+
+    let bgColor = 'inherit';
+    if (completeDate && now > completeDate) {
+      bgColor = theme.palette.error.light;
+    } else if (threeDaysBefore && now > threeDaysBefore) {
+      bgColor = theme.palette.warning.light;
+    }
+
+    return {
+      marginBottom: 8,
+      padding: 8,
+      border: '1px solid #ddd',
+      borderRadius: 4,
+      display: 'flex',
+      alignItems: 'center',
+      backgroundColor: bgColor,
+      '&:hover': {
+        opacity: 0.9
+      }
+    };
+  };
 
   return (
     <>    
@@ -35,7 +62,7 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
         onDragStart={(e) => handleDragStart(e, items.length)}
         onDrop={(e) => handleDrop(e, items.length)}
         onDragOver={handleDragOver}
-        style={itemStyle}
+        style={itemStyle()}
       >
         {editId === 'add-new-top' ? (
           <TextField
@@ -61,7 +88,7 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
           onDragStart={(e) => handleDragStart(e, index)}
           onDrop={(e) => handleDrop(e, index)}
           onDragOver={handleDragOver}
-          style={itemStyle}
+          style={itemStyle(item.completeBy)}
         >
           <IconButton onClick={() => handleDeleteItem(item.id)}>
             <DoneIcon />
@@ -100,7 +127,7 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
           onDragStart={(e) => handleDragStart(e, items.length)}
           onDrop={(e) => handleDrop(e, items.length)}
           onDragOver={handleDragOver}
-          style={itemStyle}
+          style={itemStyle(theme)}
           >          
           {editId === 'add-new-bottom' ? (
             <TextField

@@ -109,7 +109,13 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
                 {item.title}
                 {item.completeBy && (
                   <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary' }}>
-                    Complete by: {new Date(item.completeBy).toLocaleDateString()}
+                    Complete by: {new Date(item.completeBy).toLocaleString(undefined, { 
+                      year: 'numeric',
+                      month: 'numeric',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
                   </Typography>
                 )}
               </Typography>                                          

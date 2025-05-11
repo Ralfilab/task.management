@@ -18,7 +18,6 @@ import {
   TextField,
   FormControlLabel
 } from '@mui/material';
-import Grid from '@mui/material/Grid';
 import CloseIcon from '@mui/icons-material/Close';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
@@ -120,7 +119,6 @@ const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {
             label="Complete By"
             value={completeBy}
             onChange={(newValue) => setCompleteBy(newValue)}
-            renderInput={(params) => <TextField {...params} fullWidth />}
           />
         </LocalizationProvider>
 

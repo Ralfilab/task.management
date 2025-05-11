@@ -15,8 +15,10 @@ import {
   Button,
   Checkbox,
   ListItemText,
-  TextField
+  TextField,
+  FormControlLabel
 } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import CloseIcon from '@mui/icons-material/Close';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
@@ -35,6 +37,9 @@ const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {
   const [boardsError, setBoardsError] = useState(false);
   const [selectedBoards, setSelectedBoards] = useState(item.boards);
   const [completeBy, setCompleteBy] = useState(item.completeBy ? new Date(item.completeBy) : null);
+  const [enableNotifications, setEnableNotifications] = useState(item.enableNotifications || false);
+  const [notificationFrequency, setNotificationFrequency] = useState(item.notificationFrequency || 'daily');
+  const [notificationDaysBefore, setNotificationDaysBefore] = useState(item.notificationDaysBefore || 1);
 
   const handleChange = (event) => {
     const {
@@ -53,7 +58,10 @@ const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {
     var item = TaskRepository.get(id);
     item.boards = selectedBoards;
     item.description = description;
-    item.completeBy = completeBy;    
+    item.completeBy = completeBy;
+    item.enableNotifications = enableNotifications;
+    item.notificationFrequency = notificationFrequency;
+    item.notificationDaysBefore = notificationDaysBefore;
 
     TaskRepository.update(item);
 
@@ -115,6 +123,45 @@ const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {
             renderInput={(params) => <TextField {...params} fullWidth />}
           />
         </LocalizationProvider>
+
+        <Box sx={{ mt: 2 }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={enableNotifications}
+                onChange={(e) => setEnableNotifications(e.target.checked)}
+              />
+            }
+            label="Enable Notifications"
+          />
+        </Box>
+
+        {enableNotifications && (          
+          <>
+          <FormControl fullWidth>
+            <InputLabel>Notification Frequency</InputLabel>
+            <Select
+              value={notificationFrequency}
+              onChange={(e) => setNotificationFrequency(e.target.value)}
+              label="Notification Frequency"
+            >
+              <MenuItem value="daily">Daily</MenuItem>
+              <MenuItem value="weekly">Weekly</MenuItem>
+              <MenuItem value="biweekly">Bi-weekly</MenuItem>
+              <MenuItem value="monthly">Monthly</MenuItem>
+            </Select>
+          </FormControl>
+
+          <TextField
+            fullWidth
+            type="number"
+            label="Days before Complete By"
+            value={notificationDaysBefore}
+            onChange={(e) => setNotificationDaysBefore(parseInt(e.target.value))}                
+              helperText="Number of days before Complete By date to start sending notifications"
+            />
+          </>
+        )}
 
         <ReactQuill
           theme="snow"

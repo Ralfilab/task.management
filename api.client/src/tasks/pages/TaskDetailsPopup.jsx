@@ -145,10 +145,9 @@ const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {
               onChange={(e) => setNotificationFrequency(e.target.value)}
               label="Notification Frequency"
             >
+              <MenuItem value="hourly">Hourly</MenuItem>
               <MenuItem value="daily">Daily</MenuItem>
               <MenuItem value="weekly">Weekly</MenuItem>
-              <MenuItem value="biweekly">Bi-weekly</MenuItem>
-              <MenuItem value="monthly">Monthly</MenuItem>
             </Select>
           </FormControl>
 

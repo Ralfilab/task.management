@@ -1,3 +1,5 @@
+import BrowserNotificationRepository from '../repositories/BrowserNotificationRepository';
+
 class BrowserNotificationOperations {  
   static async requestPermission() {
     try {      
@@ -16,27 +18,26 @@ class BrowserNotificationOperations {
       const now = new Date();      
     
       items.forEach(item => {
-        if (item.completeBy) {
-          const completeDate = new Date(item.completeBy);
-          const threeDaysBefore = new Date(completeDate);
-          threeDaysBefore.setDate(completeDate.getDate() - 3);
-
-          if (now > completeDate) {
-            this.showNotification('Task Overdue!', {
-              body: `The task "${item.title}" is overdue!`,
-              icon: '/path-to-your-icon.png',
-              tag: `overdue-${item.id}`,
-              requireInteraction: true
-            });
-          } else if (now > threeDaysBefore) {
-            this.showNotification('Task Due Soon!', {
-              body: `The task "${item.title}" is due in less than 3 days!`,
-              icon: '/path-to-your-icon.png',
-              tag: `due-soon-${item.id}`,
-              requireInteraction: true
-            });
-          }
+        if (!item.enableNotifications || !item.completeBy) {
+          return;
         }
+
+        const completeDate = new Date(item.completeBy);
+        const notificationDate = new Date(completeDate);
+        notificationDate.setDate(completeDate.getDate() - (item.notificationDaysBefore || 1));
+
+        const taskTitle = now > completeDate ? 'Task Overdue!' : 'Task Due Soon!';
+        const taskBody = now > completeDate ? `The task "${item.title}" is overdue!` : `The task "${item.title}" is due in ${item.notificationDaysBefore} days!`;
+        
+        if (BrowserNotificationRepository.shouldSendNotification(item)) {
+          this.showNotification(taskTitle, {
+            body: taskBody,
+            icon: '/path-to-your-icon.png',
+            tag: `overdue-${item.id}`,
+            requireInteraction: true
+          });
+          BrowserNotificationRepository.updateLastNotificationTime(item.id);
+        }        
       });
     }
   }

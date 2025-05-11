@@ -23,7 +23,7 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-  
+
   const itemStyle = (completeBy) => {
     const now = new Date();
     const completeDate = completeBy ? new Date(completeBy) : null;

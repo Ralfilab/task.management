@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState} from 'react';
 import { Button, Box } from '@mui/material';
 import { UploadFile } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
 import ConfigurationRepository from '../repositories/ConfigurationRepository';
-
+import BrowserNotificationOperations from '../../notifications/operations/BrowserNotificationOperations';
 const ConfigurationContainer = () => {    
+  
+  const [browserNotificationPermission, setBrowserNotificationPermission] = 
+    useState(BrowserNotificationOperations.isPermissionGranted());
+  
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -16,6 +20,11 @@ const ConfigurationContainer = () => {
       reader.readAsText(file);
     }
   };
+
+  const setNotificationPermission = () => {
+    setBrowserNotificationPermission(BrowserNotificationOperations.isPermissionGranted());
+    setBrowserNotificationPermission(true);
+  }
 
   return (          
     <>
@@ -31,11 +40,20 @@ const ConfigurationContainer = () => {
             hidden
             onChange={handleFileChange}
           />
-        </Button>      
+        </Button>
         <Button
           component="label" onClick={() => ConfigurationRepository.exportAllDataToFile()} >
           Export data
         </Button>
+        {!browserNotificationPermission && (
+          <Button
+            onClick={() => setNotificationPermission()} 
+            variant="contained"
+            color="primary"
+            >
+            Request browser notification access
+          </Button>
+        )}
         <Button
           component={Link}
           to="/boards"

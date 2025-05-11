@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ToDoList from './TodoList';
 import TaskDetailsPopup from './TaskDetailsPopup';
 import TaskRepository from '../repositories/TaskRepository'
@@ -18,10 +18,14 @@ const ToDoListContainer = () => {
   const [itemPopupId, setItemPopupId] = useState(null);  
 
   const [alertOpen, setAlertOpen] = useState(false);  
+  const notificationTimeoutRef = useRef(null);
 
   useEffect(() => {
     loadTasks();
   }, [boardId]);
+
+  // Set up notification checking interval    
+  // Keep notifications state in browser memory => once a day notification    
 
   const handleAlertClose = (event, reason) => {
     if (reason === 'clickaway') {

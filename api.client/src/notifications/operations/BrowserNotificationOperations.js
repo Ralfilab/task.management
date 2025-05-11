@@ -4,6 +4,11 @@ class BrowserNotificationOperations {
   static async requestPermission() {
     try {      
       console.log('Requesting notification permission...');
+      if (typeof Notification === 'undefined') {
+        console.log('Notifications are not supported in this environment');
+        return false;
+      }
+      
       const permission = await Notification.requestPermission();
       console.log('Notification permission:', permission);
       return permission === 'granted';
@@ -13,7 +18,7 @@ class BrowserNotificationOperations {
     }
   };
 
-  static checkTaskDueDates(items) {
+  static checkTaskDueDates(items) {    
     if (this.isPermissionGranted()) {
       const now = new Date();      
     
@@ -89,11 +94,19 @@ class BrowserNotificationOperations {
   }
 
   static isPermissionGranted() {
+    if (typeof Notification === 'undefined') {
+      return false;
+    }
     return Notification.permission === 'granted';
   }
 
   static showNotification(title, options) {
     console.log('Attempting to show notification:', title);
+    if (typeof Notification === 'undefined') {
+      console.log('Notifications are not supported in this environment');
+      return;
+    }
+    
     if (this.isPermissionGranted()) {
       try {
         new Notification(title, options);

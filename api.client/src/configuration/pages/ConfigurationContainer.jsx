@@ -24,8 +24,8 @@ const ConfigurationContainer = () => {
   };
 
   const setNotificationPermission = () => {
-    BrowserNotificationOperations.requestPermission() ;
-    setBrowserNotificationPermission(true);
+    const result = BrowserNotificationOperations.requestPermission();
+    setBrowserNotificationPermission(result);
   }
 
   return (          

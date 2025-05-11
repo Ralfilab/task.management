@@ -1,5 +1,5 @@
 class BrowserNotificationRepository {
-  static storageKey = 'taskNotificationHistory';
+  static storageKey = 'wickedTaskNotificationHistory';
 
   static get() {
     const saved = localStorage.getItem(this.storageKey);

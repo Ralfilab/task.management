@@ -26,7 +26,7 @@ import { BoardContext } from '../../boards/contexts/BoardContext';
 import TaskRepository from '../repositories/TaskRepository'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {  
   const theme = useTheme();
@@ -116,7 +116,7 @@ const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {
         </FormControl>
 
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <DatePicker
+          <DateTimePicker
             label="Complete By"
             value={completeBy}
             onChange={(newValue) => setCompleteBy(newValue)}

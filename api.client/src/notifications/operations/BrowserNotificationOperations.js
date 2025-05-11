@@ -18,9 +18,9 @@ class BrowserNotificationOperations {
       const now = new Date();      
     
       items.forEach(item => {
-        if (BrowserNotificationRepository.shouldSendNotification(item)) {
+        if (!this.shouldSendNotification(item)) {
           return;
-        }        
+        }
 
         const completeDate = new Date(item.completeBy);
         const notificationDate = new Date(completeDate);
@@ -50,6 +50,44 @@ class BrowserNotificationOperations {
     }
   }
 
+  static shouldSendNotification(task, currentTime = new Date()) {
+    if (!task.enableNotifications || !task.completeBy) {
+      return false;
+    }
+
+    const completeDate = new Date(task.completeBy);
+    const isOverdue = currentTime > completeDate;    
+
+    // For upcoming tasks
+    const notificationDate = new Date(completeDate);
+    notificationDate.setDate(completeDate.getDate() - (task.notificationDaysBefore || 1));
+        
+    if ((currentTime >= notificationDate && currentTime < completeDate) || isOverdue) {
+      const lastNotification = BrowserNotificationRepository.getLastNotificationTime(task.id);
+            
+      if (!lastNotification) {
+        return true;
+      }
+
+      const lastNotificationTime = new Date(lastNotification);
+      const hoursSinceLastNotification = (currentTime - lastNotificationTime) / (1000 * 60 * 60);
+
+      // Use the same notification frequency logic as overdue tasks
+      switch (task.notificationFrequency) {
+        case 'hourly':
+          return hoursSinceLastNotification >= 1;
+        case 'daily':
+          return hoursSinceLastNotification >= 12; // Twice daily
+        case 'weekly':
+          return hoursSinceLastNotification >= 24; // Daily 
+        default:
+          return hoursSinceLastNotification >= 24; // Default to daily
+      }
+    }
+
+    return false;
+  }
+
   static isPermissionGranted() {
     return Notification.permission === 'granted';
   }
@@ -66,7 +104,7 @@ class BrowserNotificationOperations {
     } else {
       console.log('Notification permission not granted');
     }
-  }    
+  }
 }
 
 export default BrowserNotificationOperations;

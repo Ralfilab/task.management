@@ -46,7 +46,7 @@ class BrowserNotificationOperations {
         
           this.showNotification(taskTitle, {
             body: taskBody,
-            icon: '/path-to-your-icon.png',
+            icon: '/wizard_logo_white_background_tiny.jpg',
             tag: `overdue-${item.id}`,
             requireInteraction: true
           });

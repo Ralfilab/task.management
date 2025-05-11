@@ -15,7 +15,6 @@ import {
   Button,
   Checkbox,
   ListItemText,
-  TextField,
   FormControlLabel
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
@@ -23,9 +22,9 @@ import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { BoardContext } from '../../boards/contexts/BoardContext';
 import TaskRepository from '../repositories/TaskRepository'
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {  
   const theme = useTheme();

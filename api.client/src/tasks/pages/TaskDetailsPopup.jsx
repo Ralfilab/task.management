@@ -149,14 +149,21 @@ const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {
             </Select>
           </FormControl>
 
-          <TextField
-            fullWidth
-            type="number"
-            label="Days before Complete By"
-            value={notificationDaysBefore}
-            onChange={(e) => setNotificationDaysBefore(parseInt(e.target.value))}                
-              helperText="Number of days before Complete By date to start sending notifications"
-            />
+          <FormControl fullWidth>
+            <InputLabel>Days before Complete By</InputLabel>
+            <Select
+              value={notificationDaysBefore}
+              onChange={(e) => setNotificationDaysBefore(e.target.value)}
+              label="Days before Complete By"
+            >
+              {[1, 2, 3, 4, 5].map((day) => (
+                <MenuItem key={day} value={day}>
+                  {day}
+                </MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>Number of days before Complete By date to start sending notifications</FormHelperText>
+          </FormControl>
           </>
         )}
 

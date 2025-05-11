@@ -18,26 +18,34 @@ class BrowserNotificationOperations {
       const now = new Date();      
     
       items.forEach(item => {
-        if (!item.enableNotifications || !item.completeBy) {
+        if (BrowserNotificationRepository.shouldSendNotification(item)) {
           return;
-        }
+        }        
 
         const completeDate = new Date(item.completeBy);
         const notificationDate = new Date(completeDate);
         notificationDate.setDate(completeDate.getDate() - (item.notificationDaysBefore || 1));
 
-        const taskTitle = now > completeDate ? 'Task Overdue!' : 'Task Due Soon!';
-        const taskBody = now > completeDate ? `The task "${item.title}" is overdue!` : `The task "${item.title}" is due in ${item.notificationDaysBefore} days!`;
+        const timeRemaining = completeDate - now;
+        const daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+        const hoursRemaining = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutesRemaining = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
         
-        if (BrowserNotificationRepository.shouldSendNotification(item)) {
+        const taskTitle = now > completeDate ? 'Task Overdue!' : 'Task Due Soon!';
+        const taskBody = now > completeDate 
+          ? `The task "${item.title}" is overdue!` 
+          : `The task "${item.title}" is due in ${daysRemaining > 0 
+              ? `${daysRemaining} days` 
+              : `${hoursRemaining} hours and ${minutesRemaining} minutes`}!`;
+        
+        
           this.showNotification(taskTitle, {
             body: taskBody,
             icon: '/path-to-your-icon.png',
             tag: `overdue-${item.id}`,
             requireInteraction: true
           });
-          BrowserNotificationRepository.updateLastNotificationTime(item.id);
-        }        
+          BrowserNotificationRepository.updateLastNotificationTime(item.id);              
       });
     }
   }

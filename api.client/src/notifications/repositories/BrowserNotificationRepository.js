@@ -33,7 +33,7 @@ class BrowserNotificationRepository {
   }
 
   static shouldSendNotification(task, currentTime = new Date()) {
-    if (!task.enableNotifications) {
+    if (!task.enableNotifications || !item.completeBy) {
       return false;
     }
 

@@ -23,8 +23,7 @@ const ToDoListContainer = () => {
   useEffect(() => {
     loadTasks();
   }, [boardId]);
-
-  // Set up notification checking interval    
+  
   // Keep notifications state in browser memory => once a day notification    
 
   const handleAlertClose = (event, reason) => {

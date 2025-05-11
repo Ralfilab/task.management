@@ -1,6 +1,6 @@
 class BrowserNotificationOperations {  
   static async requestPermission() {
-    try {
+    try {      
       console.log('Requesting notification permission...');
       const permission = await Notification.requestPermission();
       console.log('Notification permission:', permission);
@@ -22,14 +22,14 @@ class BrowserNotificationOperations {
           threeDaysBefore.setDate(completeDate.getDate() - 3);
 
           if (now > completeDate) {
-            showNotification('Task Overdue!', {
+            this.showNotification('Task Overdue!', {
               body: `The task "${item.title}" is overdue!`,
               icon: '/path-to-your-icon.png',
               tag: `overdue-${item.id}`,
               requireInteraction: true
             });
           } else if (now > threeDaysBefore) {
-            showNotification('Task Due Soon!', {
+            this.showNotification('Task Due Soon!', {
               body: `The task "${item.title}" is due in less than 3 days!`,
               icon: '/path-to-your-icon.png',
               tag: `due-soon-${item.id}`,

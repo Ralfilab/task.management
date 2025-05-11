@@ -24,7 +24,7 @@ const ConfigurationContainer = () => {
   };
 
   const setNotificationPermission = () => {
-    setBrowserNotificationPermission(BrowserNotificationOperations.isPermissionGranted());
+    BrowserNotificationOperations.requestPermission() ;
     setBrowserNotificationPermission(true);
   }
 
@@ -81,9 +81,14 @@ const ConfigurationContainer = () => {
         <Typography variant="body2" color="text.secondary" paragraph>
           Enable browser notifications to stay updated with important alerts and reminders.
         </Typography>
-        {!browserNotificationPermission && (
+        {browserNotificationPermission ? (
+          <Typography variant="body2" color="success.main" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Notifications fontSize="small" />
+            Notifications are enabled
+          </Typography>
+        ) : (
           <Button
-            onClick={setNotificationPermission}
+            onClick={() => setNotificationPermission()}
             variant="contained"
             color="primary"
             startIcon={<Notifications />}

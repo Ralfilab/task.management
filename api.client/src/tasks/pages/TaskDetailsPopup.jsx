@@ -166,12 +166,28 @@ const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {
           </>
         )}
 
-        <ReactQuill
-          theme="snow"
-          value={description}
-          onChange={setDescription}
-          style={{ height: '100%', width: '100%' }}
-        />
+        <Box sx={{ 
+          '& .ql-container': {
+            backgroundColor: 'background.paper',
+            color: 'text.primary',
+            borderColor: 'divider',
+          },
+          '& .ql-toolbar': {
+            backgroundColor: 'background.paper',
+            borderColor: 'divider',
+          },
+          '& .ql-editor': {
+            minHeight: '200px',
+            color: 'text.primary',
+          }
+        }}>
+          <ReactQuill
+            theme="snow"
+            value={description}
+            onChange={setDescription}
+            style={{ height: '100%', width: '100%' }}
+          />
+        </Box>
 
         <Button variant="contained" color="primary" onClick={() => handleSave(item.id)}>
           Save

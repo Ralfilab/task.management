@@ -93,7 +93,7 @@ const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {
       </DialogTitle>
 
       <DialogContent sx={{ pl: 3, pr: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>        
-        <FormControl error={boardsError} variant="outlined" style={{ minWidth: 200 }}>
+        <FormControl error={boardsError} variant="outlined" style={{ minWidth: 200 }} sx={{ mt: 2 }}>
           <InputLabel id="multi-select-label">Select Boards</InputLabel>
           <Select
             labelId="multi-select-label"

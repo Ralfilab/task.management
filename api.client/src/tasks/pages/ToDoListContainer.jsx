@@ -5,8 +5,6 @@ import TaskRepository from '../repositories/TaskRepository'
 import TaskOperations from '../operations/TaskOperations'
 import { useParams } from "react-router-dom";
 
-// https://copilot.microsoft.com/shares/8XCoJ7tH5UAfWePjGLDrv
-
 const ToDoListContainer = () => {  
   let { boardId } = useParams();  
 

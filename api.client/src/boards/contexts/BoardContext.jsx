@@ -15,6 +15,7 @@ export const BoardProvider = ({ children }) => {
     const newItems = [...items, newItem];    
     setItems(newItems);    
     BoardRepository.save(newItems);
+    return newItem;
   };
 
   const updateBoard = (id, updatedTitle) => {
@@ -36,8 +37,18 @@ export const BoardProvider = ({ children }) => {
     }); 
   };  
 
+  const reorderBoards = (draggedIndex, index, items) => {
+    if (draggedIndex !== index) {
+      const reorderedItems = [...items];
+      const [movedItem] = reorderedItems.splice(draggedIndex, 1);
+      reorderedItems.splice(index, 0, movedItem);
+      setItems(reorderedItems);
+      BoardRepository.save(reorderedItems);      
+    }
+  }
+
   return (
-    <BoardContext.Provider value={{ boards: items, addBoard, updateBoard, removeBoard, import: setItems  }}>
+    <BoardContext.Provider value={{ boards: items, addBoard, updateBoard, removeBoard, reorderBoards, import: setItems  }}>
       {children}
     </BoardContext.Provider>
   );

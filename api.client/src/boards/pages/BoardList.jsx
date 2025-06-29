@@ -100,34 +100,32 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem,
             <DeleteIcon />
           </IconButton>
         </ListItem>
-      ))}
-      { items.length > 0 && (
-        <ListItem
-          key="add-new-bottom"
-          draggable
-          onDragStart={(e) => handleDragStart(e, items.length)}
-          onDrop={(e) => handleDrop(e, items.length)}
-          onDragOver={handleDragOver}
-          style={itemStyle(theme)}
-          >          
-          {editId === 'add-new-bottom' ? (
-            <TextField
-              fullWidth
-              autoFocus
-              value={newItem}
-              onChange={(e) => setNewItem(e.target.value)}
-              onBlur={() => handleAddNewItem(items.length)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleAddNewItem(items.length);
-              }}
-            />
-          ) : (            
-                <IconButton onClick={() => setEditId('add-new-bottom')}>
-              <AddTaskIcon />
-            </IconButton>          
-          )}
-        </ListItem>
-      )}
+      ))}      
+      <ListItem
+        key="add-new-bottom"
+        draggable
+        onDragStart={(e) => handleDragStart(e, items.length)}
+        onDrop={(e) => handleDrop(e, items.length)}
+        onDragOver={handleDragOver}
+        style={itemStyle(theme)}
+        >          
+        {editId === 'add-new-bottom' ? (
+          <TextField
+            fullWidth
+            autoFocus
+            value={newItem}
+            onChange={(e) => setNewItem(e.target.value)}
+            onBlur={() => handleAddNewItem(items.length)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleAddNewItem(items.length);
+            }}
+          />
+        ) : (            
+              <IconButton onClick={() => setEditId('add-new-bottom')}>
+            <AddTaskIcon />
+          </IconButton>          
+        )}
+      </ListItem>   
     </List>        
     </>
   );

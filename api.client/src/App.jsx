@@ -4,9 +4,11 @@ import ImportExportIcon from '@mui/icons-material/ImportExport';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import { Outlet } from 'react-router-dom';
 import { AppProvider } from '@toolpad/core/react-router-dom';
+import { NotificationsProvider, useNotifications } from '@toolpad/core/useNotifications';
 import { BoardContext, BoardProvider } from "./boards/contexts/BoardContext";
 import TaskRepository from "./tasks/repositories/TaskRepository";
-import BrowserNotificationOperations from "./notifications/operations/BrowserNotificationOperations";
+import NotificationOperations from "./notifications/operations/NotificationOperations";
+
 
 const generateNavigation = (boards) => [
   {
@@ -36,18 +38,14 @@ const BRANDING = {
 
 function NavigationWrapper() {
   const { boards } = React.useContext(BoardContext);
-  return (
-    <AppProvider navigation={generateNavigation(boards)} branding={BRANDING}>
-      <Outlet />
-    </AppProvider>
-  );
-}
-
-export default function App() {
+  const notifications = useNotifications();
+  
   useEffect(() => {        
     const checkTasks = () => {
       const tasks = TaskRepository.getTask();
-      BrowserNotificationOperations.checkTaskDueDates(tasks);
+      NotificationOperations.checkTaskDueDates(tasks, (message, options) => {
+        notifications.show(message, options);
+      });
     };
     
     checkTasks();
@@ -57,11 +55,22 @@ export default function App() {
 
     // Cleanup interval on component unmount
     return () => clearInterval(intervalId);
-  }, []);
+  }, [notifications]);
+
+  return (
+    <AppProvider navigation={generateNavigation(boards)} branding={BRANDING}>
+      <Outlet />
+    </AppProvider>
+  );
+}
+
+export default function App() {
 
   return (
     <BoardProvider>
-      <NavigationWrapper />
+      <NotificationsProvider>
+        <NavigationWrapper />
+      </NotificationsProvider>
     </BoardProvider>
   );
 }

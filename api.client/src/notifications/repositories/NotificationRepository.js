@@ -1,4 +1,4 @@
-class BrowserNotificationRepository {
+class NotificationRepository {
   static storageKey = 'wickedTaskNotificationHistory';
 
   static get() {
@@ -33,4 +33,5 @@ class BrowserNotificationRepository {
   }  
 }
 
-export default BrowserNotificationRepository; 
+export default NotificationRepository;
+

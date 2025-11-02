@@ -51,3 +51,6 @@ Thumbs.db
 *.mov
 *.wmv
 
+# Visual Studio
+*.user
+

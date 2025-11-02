@@ -1,16 +1,13 @@
-import React, { useState} from 'react';
+import React from 'react';
 import { Button, Box, Typography, Paper, Stack, useTheme, useMediaQuery } from '@mui/material';
-import { UploadFile, Download, Notifications, Dashboard } from '@mui/icons-material';
+import { UploadFile, Download, Dashboard } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
 import ConfigurationRepository from '../repositories/ConfigurationRepository';
-import BrowserNotificationOperations from '../../notifications/operations/BrowserNotificationOperations';
 
 const ConfigurationContainer = () => {    
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [browserNotificationPermission, setBrowserNotificationPermission] = 
-    useState(BrowserNotificationOperations.isPermissionGranted());
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));  
   
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -22,11 +19,6 @@ const ConfigurationContainer = () => {
       reader.readAsText(file);
     }
   };
-
-  const setNotificationPermission = () => {
-    const result = BrowserNotificationOperations.requestPermission();
-    setBrowserNotificationPermission(result);
-  }
 
   return (          
     <Box sx={{ 
@@ -72,33 +64,7 @@ const ConfigurationContainer = () => {
             Export Data
           </Button>
         </Stack>
-      </Paper>
-
-      <Paper elevation={2} sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Notifications
-        </Typography>
-        <Typography variant="body2" color="text.secondary" paragraph>
-          Enable browser notifications to stay updated with important alerts and reminders.
-        </Typography>
-        {browserNotificationPermission ? (
-          <Typography variant="body2" color="success.main" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Notifications fontSize="small" />
-            Notifications are enabled
-          </Typography>
-        ) : (
-          <Button
-            onClick={() => setNotificationPermission()}
-            variant="contained"
-            color="primary"
-            startIcon={<Notifications />}
-            fullWidth={isMobile}
-            sx={{ minWidth: { xs: '100%', sm: 200 } }}
-          >
-            Enable Notifications
-          </Button>
-        )}
-      </Paper>
+      </Paper>      
 
       <Paper elevation={2} sx={{ p: { xs: 2, sm: 3 } }}>
         <Typography variant="h6" gutterBottom>

@@ -1,25 +1,7 @@
-import BrowserNotificationRepository from '../repositories/BrowserNotificationRepository';
+import NotificationRepository from '../repositories/NotificationRepository';
 
-class BrowserNotificationOperations {  
-  static async requestPermission() {
-    try {      
-      console.log('Requesting notification permission...');
-      if (typeof Notification === 'undefined') {
-        console.log('Notifications are not supported in this environment');
-        return false;
-      }
-      
-      const permission = await Notification.requestPermission();
-      console.log('Notification permission:', permission);
-      return permission === 'granted';
-    } catch (error) {
-      console.error('Error requesting notification permission:', error);
-      return false;
-    }
-  };
-
-  static checkTaskDueDates(items) {    
-    if (this.isPermissionGranted()) {
+class NotificationOperations {    
+  static checkTaskDueDates(items, showNotificationCallback) {    
       const now = new Date();      
     
       items.forEach(item => {
@@ -44,15 +26,9 @@ class BrowserNotificationOperations {
               : `${hoursRemaining} hours and ${minutesRemaining} minutes`}!`;
         
         
-          this.showNotification(taskTitle, {
-            body: taskBody,
-            icon: '/wizard_logo_white_background_tiny.jpg',
-            tag: `overdue-${item.id}`,
-            requireInteraction: true
-          });
-          BrowserNotificationRepository.updateLastNotificationTime(item.id);              
-      });
-    }
+          this.showNotification(taskTitle, taskBody, showNotificationCallback, item.id);
+          NotificationRepository.updateLastNotificationTime(item.id);              
+      });    
   }
 
   static shouldSendNotification(task, currentTime = new Date()) {
@@ -68,7 +44,7 @@ class BrowserNotificationOperations {
     notificationDate.setDate(completeDate.getDate() - (task.notificationDaysBefore || 1));
         
     if ((currentTime >= notificationDate && currentTime < completeDate) || isOverdue) {
-      const lastNotification = BrowserNotificationRepository.getLastNotificationTime(task.id);
+      const lastNotification = NotificationRepository.getLastNotificationTime(task.id);
             
       if (!lastNotification) {
         return true;
@@ -92,32 +68,18 @@ class BrowserNotificationOperations {
 
     return false;
   }
-
-  static isPermissionGranted() {
-    if (typeof Notification === 'undefined') {
-      return false;
-    }
-    return Notification.permission === 'granted';
-  }
-
-  static showNotification(title, options) {
-    console.log('Attempting to show notification:', title);
-    if (typeof Notification === 'undefined') {
-      console.log('Notifications are not supported in this environment');
-      return;
-    }
-    
-    if (this.isPermissionGranted()) {
-      try {
-        new Notification(title, options);
-        console.log('Notification shown successfully');
-      } catch (error) {
-        console.error('Error showing notification:', error);
-      }
-    } else {
-      console.log('Notification permission not granted');
+  
+  static showNotification(title, message, showNotificationCallback, taskId) {
+    if (showNotificationCallback) {
+      const severity = title.includes('Overdue') ? 'error' : 'warning';
+      showNotificationCallback(`${title}: ${message}`, {
+        severity,
+        key: `task-notification-${taskId}`,
+        autoHideDuration: 6000,
+      });
     }
   }
 }
 
-export default BrowserNotificationOperations;
+export default NotificationOperations;
+

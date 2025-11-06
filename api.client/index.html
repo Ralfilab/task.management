@@ -2,13 +2,57 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link rel="icon" type="image/svg+xml" href="/wizard.svg" />
-    <link rel="apple-touch-icon" href="/wizard_logo_white_background_150x150.png">    
-    <title>To-Do List</title>
+    <link rel="apple-touch-icon" href="/wizard_logo_white_background_150x150.png">
+    <title>Local Task List</title>
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://localtasklist.com/" />
+
+    <!-- Primary SEO -->
+    <meta name="description" content="Local Task List — no login or setup. Create multiple boards, share tasks, set reminders. Dark mode, mobile-friendly, and all data stays in your browser." />
+    <meta name="keywords" content="local todo, offline task manager, private todo, boards, reminders, dark mode" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Local Task List" />
+    <meta property="og:description" content="No login or setup — start typing. Multiple boards, reminders, dark mode. All tasks remain local to your browser." />
+    <meta property="og:url" content="https://localtasklist.com/" />
+    <meta property="og:image" content="https://localtasklist.com/wizard.svg" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Local Task List" />
+    <meta name="twitter:description" content="Lightweight, privacy-first to-do app. Free, works offline, no login required." />
+    <meta name="twitter:image" content="https://localtasklist.com/wizard.svg" />
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": "Local Task List",
+          "description": "A lightweight, privacy-first to-do app with multiple boards, reminders and dark mode. No login required; data stored locally.",
+          "applicationCategory": "ProductivityApplication",
+          "operatingSystem": "Web",
+          "url": "https://localtasklist.com/",
+          "image": "https://localtasklist.com/wizard.svg",
+          "featureList": [
+            "No login or setup — open and start typing",
+            "All tasks stored locally; data never leaves your computer",
+            "Multiple boards and task sharing",
+            "Reminders and mobile-friendly dark mode",
+            "Free and lightweight"
+          ]
+        }
+    </script>
 </head>
-  <body>
-    <div id="root"></div>
+<body>
+    <div id="root">              
+    </div>
+
     <script type="module" src="/src/main.jsx"></script>
-  </body>
+</body>
 </html>

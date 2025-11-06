@@ -33,7 +33,7 @@ const generateNavigation = (boards) => [
 ];
 
 const BRANDING = {
-  title: 'To-Do List',
+  title: 'Local Task List',
 };
 
 function NavigationWrapper() {

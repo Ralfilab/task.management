@@ -17,7 +17,7 @@ public class TasksTests : PageTest
         await Page.GotoAsync(siteUrl);
 
         // Expect a title "to contain" a substring.
-        await Expect(Page).ToHaveTitleAsync(new Regex("To-Do List"));
+        await Expect(Page).ToHaveTitleAsync(new Regex("Local Task List"));
     }
 
     [Test]

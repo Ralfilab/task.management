@@ -1,0 +1,85 @@
+## Table of contents
+- [Introduction](#introduction)
+- [Installation](#installation)
+  - [IIS Hosting (Windows)](#iis-hosting-windows)
+  - [SSL Certificate (win-acme)](#ssl-certificate-win-acme)
+- [Integration tests (Playwright + .NET)](#integration-tests-playwright-and-net)
+  - [Debug mode](#debug-mode)
+  - [Run tests](#run-tests)
+  - [Run a single test / filter](#run-a-single-test-filter)
+  - [Notes](#notes)
+- [Release notes](#release-notes)
+
+---
+
+<a id="introduction"></a>
+## Local task list
+
+A lightweight, privacy-first to-do app with multiple boards, reminders and dark mode. No login required; data stored locally.
+
+Website: https://localtasklist.com/
+
+---
+
+<a id="installation"></a>
+## Installation
+
+See official docs for IIS hosting: https://learn.microsoft.com/aspnet/core/host-and-deploy/iis/?view=aspnetcore-8.0
+
+<a id="iis-hosting-windows"></a>
+### IIS Hosting (Windows)
+1. Install the default IIS role using Server Manager or PowerShell.
+2. Install the ASP.NET Core hosting bundle (example release):
+   - https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-aspnetcore-8.0.8-windows-hosting-bundle-installer
+   - This ensures the correct .NET runtime, ANCM (ASP.NET Core Module), and other hosting components are present.
+3. Configure your IIS site and app pool to use No Managed Code for ASP.NET Core apps and point the site to the published folder.
+
+<a id="ssl-certificate-win-acme"></a>
+### SSL Certificate (win-acme)
+- Use win-acme to request and install Let's Encrypt certificates on IIS:
+  - https://www.win-acme.com/
+- Typical workflow:
+  1. Download win-acme and run it on the server.
+  2. Follow the interactive prompts to select the IIS site and request a certificate.
+  3. Ensure scheduled renewal and automatic binding to the site are configured.	
+---
+
+<a id="integration-tests-playwright-and-net"></a>
+## Integration tests (Playwright + .NET)
+
+Playwright-based integration tests are executed with `dotnet test`. Use environment variables to enable Playwright debug behavior.
+
+<a id="debug-mode"></a>
+### Debug mode
+- PowerShell:
+  ```
+  $env:PWDEBUG=1
+  ```
+
+### Run tests
+- Run all tests:
+  ```
+  dotnet test
+  ```
+
+### Run a single test / filter
+- To run a specific test, use its fully qualified name:
+  ```
+  dotnet test --filter "FullyQualifiedName~YourTestName"
+  ```
+- For category-based filtering, use:
+  ```
+  dotnet test --filter "Category=YourCategory"
+  ```
+
+### Notes
+- Make sure Playwright browsers are installed for CI/agents using `playwright install` or the Playwright .NET tooling that performs browser install on first run.
+- Use headful mode during debug; CI runs typically use headless mode (default) for speed.
+
+---
+<a id="release-notes"></a>
+## Release notes
+
+### v1.0.1 — 2025-11-09
+Highlights
+- Expanded readme file with release notes

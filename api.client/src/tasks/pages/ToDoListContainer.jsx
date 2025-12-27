@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import ToDoList from './TodoList';
 import TaskDetailsPopup from './TaskDetailsPopup';
 import TaskRepository from '../repositories/TaskRepository'
@@ -6,12 +6,17 @@ import TaskOperations from '../operations/TaskOperations'
 import { useParams } from "react-router-dom";
 import BoardRepository from '../../boards/repositories/BoardRepository';
 
-const ToDoListContainer = () => {  
-  let { boardId } = useParams();  
+const ToDoListContainer = () => {      
+  const { boardId: paramBoardId } = useParams();  
 
-  if(!boardId) {
-    boardId = BoardRepository.getDefaultBoard().id;
-  }
+  // Stabilize boardId to prevent unnecessary re-renders when route hasn't changed
+  const boardId = useMemo(() => {
+    const computedBoardId = paramBoardId || BoardRepository.getDefaultBoard().id;
+    console.log('useMemo computing boardId - paramBoardId:', paramBoardId, 'computedBoardId:', computedBoardId);
+    return computedBoardId;
+  }, [paramBoardId]);
+
+  console.log('ToDoListContainer render - boardId:', boardId, 'paramBoardId:', paramBoardId);
 
   const [items, setItems] = useState([]);
 
@@ -21,11 +26,26 @@ const ToDoListContainer = () => {
   const [itemPopupId, setItemPopupId] = useState(null);  
   const [popupItem, setPopupItem] = useState(null);
 
-  const [alertOpen, setAlertOpen] = useState(false);  
-  const notificationTimeoutRef = useRef(null);
+  const [alertOpen, setAlertOpen] = useState(false);    
 
+  // Memoize loadTasks so it can be passed to TaskDetailsPopup
+  const loadTasks = useCallback(async () => {    
+    console.log('loadTasks boardId: ', boardId);
+    const tasks = await TaskRepository.getTaskByBoardId(boardId);
+    setItems(tasks);    
+  }, [boardId]);
+
+  // Load tasks only when boardId changes (i.e., when route changes)
+  // Using boardId directly ensures it reloads when the route param changes
   useEffect(() => {
-    loadTasks();
+    console.log('useEffect triggered - boardId:', boardId);
+    const loadTasksAsync = async () => {
+      console.log('loadTasksAsync boardId: ', boardId);
+      const tasks = await TaskRepository.getTaskByBoardId(boardId);
+      setItems(tasks);
+    };
+    loadTasksAsync();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardId]);
   
   // Keep notifications state in browser memory => once a day notification    
@@ -96,11 +116,6 @@ const ToDoListContainer = () => {
   const itemPopupClose = () => {
     setItemPopupId(null);
     setPopupItem(null);
-  }
-
-  const loadTasks = async () => {    
-    const tasks = await TaskRepository.getTaskByBoardId(boardId);
-    setItems(tasks);    
   }
 
   return (

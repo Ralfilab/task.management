@@ -2,8 +2,8 @@ import TaskRepository from '../../tasks/repositories/TaskRepository';
 import BoardRepository from '../../boards/repositories/BoardRepository';
 
 class ConfigurationRepository {  
-  static exportAllDataToFile() {    
-    const tasks = TaskRepository.getTask();
+  static async exportAllDataToFile() {    
+    const tasks = await TaskRepository.getTask();
     const boards = BoardRepository.get();
 
     const exportData = {

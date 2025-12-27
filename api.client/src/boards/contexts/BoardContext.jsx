@@ -28,11 +28,11 @@ export const BoardProvider = ({ children }) => {
     });
   };
 
-  const removeBoard = (id) => {
+  const removeBoard = async (id) => {
     setItems((prevBoards) => {
       const newItems = prevBoards.filter((board) => board.id !== id);
       BoardRepository.save(newItems);
-      TaskRepository.deleteTasksByBoardId(id);
+      TaskRepository.deleteTasksByBoardId(id).catch(err => console.error('Error deleting tasks by board id:', err));
       return newItems;
     }); 
   };  

@@ -3,11 +3,11 @@ import TaskOperations from '../operations/TaskOperations';
 class TaskRepository {
   static storageKey = 'wickedToDoList';
 
-  static getTask() {
+  static async getTask() {
     const saved = localStorage.getItem(this.storageKey);
 
     if (!saved) {
-      const defaultTask = TaskOperations.getDefaultTasks();
+      const defaultTask = await TaskOperations.getDefaultTasks();
       localStorage.setItem(this.storageKey, JSON.stringify(defaultTask));
       return defaultTask;
     }
@@ -20,21 +20,22 @@ class TaskRepository {
     localStorage.setItem(this.storageKey, JSON.stringify(items));
   }
 
-  static mergeAndSave(items) {    
-    const mergedItems = this.mergeArraysWithOrder(this.getTask(), items);
+  static async mergeAndSave(items) {    
+    const allTasks = await this.getTask();
+    const mergedItems = this.mergeArraysWithOrder(allTasks, items);
     this.save(mergedItems);    
   }
 
-  static update(updateItem) {    
-    const items = this.getTask();
+  static async update(updateItem) {    
+    const items = await this.getTask();
     
     const newList = items.map(item => item.id === updateItem.id ? updateItem : item);
         
     this.save(newList);    
   }
 
-  static get(id) {
-    const tasks = this.getTask().filter(item => item.id === id);
+  static async get(id) {
+    const tasks = (await this.getTask()).filter(item => item.id === id);
 
     if (tasks.length !== 1) {
       throw new Error(`Number of tasks for task id ${id} is ${tasks.length}. Expected number is one.`);
@@ -43,8 +44,9 @@ class TaskRepository {
     return tasks[0];
   }
 
-  static delete(id) {
-    const newList = this.getTask().filter(item => item.id !== id);
+  static async delete(id) {
+    const allTasks = await this.getTask();
+    const newList = allTasks.filter(item => item.id !== id);
     localStorage.setItem(this.storageKey, JSON.stringify(newList));
   }
 
@@ -58,8 +60,8 @@ class TaskRepository {
     return array2;
   }
 
-  static deleteTasksByBoardId(boardId) {
-    let items = this.getTask();
+  static async deleteTasksByBoardId(boardId) {
+    let items = await this.getTask();
 
     items = items.filter(item => {
       return !item.boards || item.boards.length === 0 || !item.boards.includes(boardId)
@@ -68,11 +70,11 @@ class TaskRepository {
     localStorage.setItem(this.storageKey, JSON.stringify(items));
   }
 
-  static getTaskByBoardId(boardId) {
+  static async getTaskByBoardId(boardId) {
     const saved = localStorage.getItem(this.storageKey);
 
     if (!saved) {
-      const defaultTask = TaskOperations.getDefaultTasks();
+      const defaultTask = await TaskOperations.getDefaultTasks();
       localStorage.setItem(this.storageKey, JSON.stringify(defaultTask));
       return defaultTask;
     }

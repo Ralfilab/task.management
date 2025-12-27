@@ -47,13 +47,13 @@ const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {
     setBoardsError(value.length === 0);
   }; 
 
-  const handleSave = (id) => {
+  const handleSave = async (id) => {
     if (selectedBoards.length === 0) {
       setBoardsError(true);
       return;
     }
 
-    var item = TaskRepository.get(id);
+    var item = await TaskRepository.get(id);
     item.boards = selectedBoards;
     item.description = description;
     item.completeBy = completeBy;
@@ -61,7 +61,7 @@ const TaskDetailsPopup = ({ item, handleClose, loadTasks }) => {
     item.notificationFrequency = notificationFrequency;
     item.notificationDaysBefore = notificationDaysBefore;
 
-    TaskRepository.update(item);
+    await TaskRepository.update(item);
 
     handleClose();
 

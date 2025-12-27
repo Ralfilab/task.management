@@ -42,8 +42,8 @@ export default defineConfig({
         }
     },
     server: {
-        proxy: {
-            '^/weatherforecast': {
+        proxy: {            
+            '^/DefaultTasks': {
                 target,
                 secure: false
             }

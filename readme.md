@@ -54,6 +54,7 @@ Playwright-based integration tests are executed with `dotnet test`. Use environm
 - PowerShell:
   ```
   $env:PWDEBUG=1
+  $env:HEADED="1"
   ```
 
 ### Run tests

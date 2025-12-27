@@ -147,7 +147,7 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
               }}
             />
           ) : (            
-                <IconButton onClick={() => setEditId('add-new-bottom')}>
+                <IconButton aria-label="Open task details" onClick={() => setEditId('add-new-bottom')}>
               <AddTaskIcon />
             </IconButton>          
           )}

@@ -8,8 +8,7 @@ namespace PlaywrightTests;
 [TestFixture]
 public class TasksTests : PageTest
 {
-    private string siteUrl = TestContext.Parameters.Get("webAppUrl", "Web app url not found!");
-    private static string defaultTaskName = "Sample Item";    
+    private string siteUrl = TestContext.Parameters.Get("webAppUrl", "Web app url not found!");    
      
     [Test]
     public async Task HasTitle()
@@ -18,40 +17,18 @@ public class TasksTests : PageTest
 
         // Expect a title "to contain" a substring.
         await Expect(Page).ToHaveTitleAsync(new Regex("Local Task List"));
-    }
+    }  
 
     [Test]
-    public async Task HasDefaultTask()
-    {
-        await Page.GotoAsync(siteUrl);        
-
-        // Expects page to have a paragraph with Sample Item text.
-        await Expect(Page.GetByText(new Regex(defaultTaskName))).ToBeVisibleAsync();
-    }
-
-    [Test]
-    public async Task AddNewTask()
-    {
-        var givenNewTaskName = "Add playwright tests";
-
-        await Page.GotoAsync(siteUrl);        
-
-        await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Button).First.ClickAsync();        
-        await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Textbox).ClickAsync();
-        await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Textbox).FillAsync(givenNewTaskName);        
-        await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Textbox).PressAsync("Enter");
-        await Page.GetByRole(AriaRole.Main).ClickAsync();
-        await Expect(Page.GetByText(givenNewTaskName)).ToBeVisibleAsync();
-    }
-
-    [Test]
-    public async Task EditDefaultTask()
+    public async Task EditTask()
     {
         var givenEditedTaskName = "Edit playwright tests";
 
         await Page.GotoAsync(siteUrl);
 
-        await Page.GetByText(defaultTaskName).ClickAsync();
+        var testTask = await AddNewTask();
+
+        await Page.GetByText(testTask).ClickAsync();
         await Page.GetByRole(AriaRole.Textbox).ClickAsync();
         await Page.GetByRole(AriaRole.Textbox).FillAsync(givenEditedTaskName);
         await Page.GetByRole(AriaRole.Textbox).PressAsync("Enter");
@@ -66,15 +43,20 @@ public class TasksTests : PageTest
 
         await Page.GotoAsync(siteUrl);
 
-        await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Button).Nth(2).ClickAsync();        
+        var testTask = await AddNewTask();
+                
+        await Page.GetByRole(AriaRole.Listitem).Filter(new() { HasText = testTask })
+            .GetByTestId("EastIcon")
+            .ClickAsync();
+        
         await Page.Locator(".ql-editor").FillAsync(givenTaskDescription);
         await Expect(Page.GetByText(givenTaskDescription)).ToBeVisibleAsync();
 
-        await Page.GetByRole(AriaRole.Button, new() { Name = "Save" }).ClickAsync();        
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Save" }).ClickAsync();
 
-        await Page.GetByRole(AriaRole.Main).ClickAsync();
-
-        await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Button).Nth(2).ClickAsync();
+        await Page.GetByRole(AriaRole.Listitem).Filter(new() { HasText = testTask })
+            .GetByTestId("EastIcon")
+            .ClickAsync();
 
         await Expect(Page.GetByText(givenTaskDescription)).ToBeVisibleAsync();
     }
@@ -102,5 +84,17 @@ public class TasksTests : PageTest
                 $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}.zip"
             )
         });
+    }
+
+    private async Task<string> AddNewTask() {
+        var givenNewTaskName = "Add playwright tests" + Guid.NewGuid().ToString();        
+
+        await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Button).First.ClickAsync();
+        await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Textbox).ClickAsync();
+        await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Textbox).FillAsync(givenNewTaskName);
+        await Page.GetByRole(AriaRole.Main).GetByRole(AriaRole.Textbox).PressAsync("Enter");        
+        await Expect(Page.GetByText(givenNewTaskName)).ToBeVisibleAsync();
+
+        return givenNewTaskName;
     }
 }

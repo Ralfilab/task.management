@@ -57,7 +57,7 @@ const ConfigurationContainer = () => {
           <Button
             variant="outlined"
             startIcon={<Download />}
-            onClick={() => ConfigurationRepository.exportAllDataToFile()}
+            onClick={async () => await ConfigurationRepository.exportAllDataToFile()}
             fullWidth={isMobile}
             sx={{ minWidth: { xs: '100%', sm: 200 } }}
           >

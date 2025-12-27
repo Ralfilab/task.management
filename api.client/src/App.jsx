@@ -12,7 +12,7 @@ import NotificationOperations from "./notifications/operations/NotificationOpera
 
 const generateNavigation = (boards) => [
   {
-    title: "Home",
+    title: boards[0].title,
     icon: <TaskAltOutlinedIcon />,
     segment: "",
   },
@@ -41,8 +41,8 @@ function NavigationWrapper() {
   const notifications = useNotifications();
   
   useEffect(() => {        
-    const checkTasks = () => {
-      const tasks = TaskRepository.getTask();
+    const checkTasks = async () => {
+      const tasks = await TaskRepository.getTask();
       NotificationOperations.checkTaskDueDates(tasks, (message, options) => {
         notifications.show(message, options);
       });

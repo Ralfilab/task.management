@@ -12,12 +12,9 @@ const ToDoListContainer = () => {
   // Stabilize boardId to prevent unnecessary re-renders when route hasn't changed
   const boardId = useMemo(() => {
     const computedBoardId = paramBoardId || BoardRepository.getDefaultBoard().id;
-    console.log('useMemo computing boardId - paramBoardId:', paramBoardId, 'computedBoardId:', computedBoardId);
     return computedBoardId;
   }, [paramBoardId]);
-
-  console.log('ToDoListContainer render - boardId:', boardId, 'paramBoardId:', paramBoardId);
-
+  
   const [items, setItems] = useState([]);
 
   const [editId, setEditId] = useState(null);
@@ -29,26 +26,21 @@ const ToDoListContainer = () => {
   const [alertOpen, setAlertOpen] = useState(false);    
 
   // Memoize loadTasks so it can be passed to TaskDetailsPopup
-  const loadTasks = useCallback(async () => {    
-    console.log('loadTasks boardId: ', boardId);
+  const loadTasks = useCallback(async () => {        
     const tasks = await TaskRepository.getTaskByBoardId(boardId);
     setItems(tasks);    
   }, [boardId]);
 
   // Load tasks only when boardId changes (i.e., when route changes)
   // Using boardId directly ensures it reloads when the route param changes
-  useEffect(() => {
-    console.log('useEffect triggered - boardId:', boardId);
-    const loadTasksAsync = async () => {
-      console.log('loadTasksAsync boardId: ', boardId);
+  useEffect(() => {    
+    const loadTasksAsync = async () => {      
       const tasks = await TaskRepository.getTaskByBoardId(boardId);
       setItems(tasks);
     };
     loadTasksAsync();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [boardId]);
-  
-  // Keep notifications state in browser memory => once a day notification    
+  }, [boardId]);    
 
   const handleAlertClose = (event, reason) => {
     if (reason === 'clickaway') {

@@ -17,8 +17,8 @@ class TaskOperations {
             title: title,
             boards: [defaultBoard.id]
           }))
-        : [];
-
+        : [];      
+      
       return defaultTasks;
     } catch (error) {
       console.error('Error fetching default tasks:', error);

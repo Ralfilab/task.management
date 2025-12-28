@@ -1,5 +1,4 @@
-using System.Text;
-using System.Text.Json;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Api.Server.Services
 {
@@ -19,128 +18,95 @@ namespace Api.Server.Services
             "Review completed tasks and add notes for retrospectives"
         };
 
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly DefaultTasksCacheService _cacheService;
-        private const string OllamaBaseUrl = "http://localhost:11434";
-        private const string OllamaModel = "gemma3:1b";
+        private const string CacheKey = "DefaultTasks";
+        private readonly TimeSpan _cacheExpiration = TimeSpan.FromDays(7);
+        private readonly TimeSpan _staleThreshold = TimeSpan.FromDays(1); // Consider stale after 1 day, but still return it        
 
-        public DefaultTasksService(IHttpClientFactory httpClientFactory, DefaultTasksCacheService cacheService)
+        private readonly IMemoryCache _memoryCache;
+        private readonly Repositories.DefaultTasksRepository _repository;
+        private readonly static SemaphoreSlim _refreshSemaphore = new SemaphoreSlim(1, 1);
+
+        public DefaultTasksService(IMemoryCache memoryCache, Repositories.DefaultTasksRepository repository)
         {
-            _httpClientFactory = httpClientFactory;
-            _cacheService = cacheService;
+            _memoryCache = memoryCache;
+            _repository = repository;
         }
 
         public async Task<string[]> GetDefaultTasksAsync()
         {
-            // Always check cache first - if valid cache exists, return it immediately
-            if (_cacheService.IsCacheValid())
+            // Stale-While-Revalidate pattern: Return stale data immediately, refresh in background
+            
+            // Try to get cached data (even if stale)
+            if (_memoryCache.TryGetValue(CacheKey, out CacheEntry? cachedEntry) && 
+                cachedEntry != null && 
+                cachedEntry.Tasks != null && 
+                cachedEntry.Tasks.Length > 0)
             {
-                var cachedTasks = await _cacheService.GetCachedTasksAsync();
-                if (cachedTasks != null && cachedTasks.Length > 0)
+                // Check if cache is stale and needs refresh
+                var isStale = DateTime.UtcNow - cachedEntry.CachedAt > _staleThreshold;
+                
+                if (isStale)
                 {
-                    return cachedTasks;
+                    // Trigger background refresh without blocking
+                    _ = Task.Run(async () => await RefreshCacheAsync());
                 }
+
+                // Return stale data immediately
+                return cachedEntry.Tasks;
             }
 
-            // Cache is missing or expired - try to get fresh data from Ollama
-            try
-            {
-                var taskTitles = await GetTasksFromOllamaAsync();
-                if (taskTitles != null && taskTitles.Length > 0)
-                {
-                    // Save to cache for future use
-                    await _cacheService.SaveTasksAsync(taskTitles);
-                    return taskTitles;
-                }
-            }
-            catch (Exception)
-            {
-                // If Ollama fails, try to return cached data even if expired
-                var cachedTasks = await _cacheService.GetCachedTasksAsync();
-                if (cachedTasks != null && cachedTasks.Length > 0)
-                {
-                    return cachedTasks;
-                }
-            }
-
-            // Fall back to hardcoded default tasks if everything else fails
+            // No cache exists - return default tasks immediately and trigger background refresh
+            _ = Task.Run(async () => await RefreshCacheAsync());
             return DefaultTaskTitles;
         }
 
-        private async Task<string[]?> GetTasksFromOllamaAsync()
+        private async Task RefreshCacheAsync()
         {
-            var httpClient = _httpClientFactory.CreateClient();
-            httpClient.Timeout = TimeSpan.FromSeconds(30);
-
-            var requestBody = new
+            // Prevent concurrent refresh operations
+            if (!await _refreshSemaphore.WaitAsync(0))
             {
-                model = OllamaModel,
-                messages = new[]
-                {
-                    new
-                    {
-                        role = "user",
-                        content = "Generate 10 default task management task titles as a JSON array of strings. Return only the JSON array, no other text. Example format: [\"Task 1\", \"Task 2\", \"Task 3\"]"
-                    }
-                },
-                stream = false
-            };
-
-            var jsonContent = JsonSerializer.Serialize(requestBody);
-            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-            var response = await httpClient.PostAsync($"{OllamaBaseUrl}/api/chat", content);
-            response.EnsureSuccessStatusCode();
-
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var ollamaResponse = JsonSerializer.Deserialize<OllamaResponse>(responseContent);
-
-            if (ollamaResponse?.Message?.Content != null)
-            {
-                var taskTitlesJson = ollamaResponse.Message.Content.Trim();
-
-                // Remove markdown code blocks if present
-                if (taskTitlesJson.StartsWith("```json"))
-                {
-                    taskTitlesJson = taskTitlesJson.Substring(7);
-                }
-                if (taskTitlesJson.StartsWith("```"))
-                {
-                    taskTitlesJson = taskTitlesJson.Substring(3);
-                }
-                if (taskTitlesJson.EndsWith("```"))
-                {
-                    taskTitlesJson = taskTitlesJson.Substring(0, taskTitlesJson.Length - 3);
-                }
-                taskTitlesJson = taskTitlesJson.Trim();
-
-                // Try to extract JSON array from the response
-                var startIndex = taskTitlesJson.IndexOf('[');
-                var endIndex = taskTitlesJson.LastIndexOf(']');
-                if (startIndex >= 0 && endIndex > startIndex)
-                {
-                    taskTitlesJson = taskTitlesJson.Substring(startIndex, endIndex - startIndex + 1);
-                }
-
-                // Try to parse as JSON array
-                var taskTitles = JsonSerializer.Deserialize<string[]>(taskTitlesJson);
-                if (taskTitles != null && taskTitles.Length > 0)
-                {
-                    return taskTitles;
-                }
+                return; // Another refresh is already in progress
             }
 
-            return null;
+            try
+            {
+                // Try to get fresh data from Ollama
+                try
+                {
+                    var taskTitles = await _repository.GetTasksFromOllamaAsync();
+                    if (taskTitles != null && taskTitles.Length > 0)
+                    {
+                        // Save to cache with expiration
+                        var cacheEntry = new CacheEntry
+                        {
+                            Tasks = taskTitles,
+                            CachedAt = DateTime.UtcNow
+                        };
+
+                        var cacheOptions = new MemoryCacheEntryOptions
+                        {
+                            AbsoluteExpirationRelativeToNow = _cacheExpiration,
+                            SlidingExpiration = null // Use absolute expiration only
+                        };                        
+                        _memoryCache.Set(CacheKey, cacheEntry, cacheOptions);
+                    }
+                }
+                catch (Exception)
+                {
+                    // If Ollama fails, silently fail - we already returned stale/default data
+                    // The cache will remain unchanged
+                }
+            }
+            finally
+            {
+                _refreshSemaphore.Release();
+            }
         }
 
-        private class OllamaResponse
+        private class CacheEntry
         {
-            public OllamaMessage? Message { get; set; }
-        }
-
-        private class OllamaMessage
-        {
-            public string? Content { get; set; }
+            public string[] Tasks { get; set; } = Array.Empty<string>();
+            public DateTime CachedAt { get; set; }
         }
     }
 }

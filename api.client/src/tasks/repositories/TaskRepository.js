@@ -2,14 +2,31 @@ import TaskOperations from '../operations/TaskOperations';
 
 class TaskRepository {
   static storageKey = 'wickedToDoList';
+  // Promise-based lock to prevent concurrent initialization
+  static _initializationPromise = null;
 
   static async getTask() {
     const saved = localStorage.getItem(this.storageKey);
 
     if (!saved) {
-      const defaultTask = await TaskOperations.getDefaultTasks();
-      localStorage.setItem(this.storageKey, JSON.stringify(defaultTask));
-      return defaultTask;
+      // If initialization is already in progress, wait for it
+      if (this._initializationPromise) {
+        return await this._initializationPromise;
+      }
+
+      // Start initialization and store the promise
+      this._initializationPromise = (async () => {
+        try {
+          const defaultTask = await TaskOperations.getDefaultTasks();
+          localStorage.setItem(this.storageKey, JSON.stringify(defaultTask));
+          return defaultTask;
+        } finally {
+          // Clear the promise after initialization completes
+          this._initializationPromise = null;
+        }
+      })();
+
+      return await this._initializationPromise;
     }
 
     const initialValue = JSON.parse(saved);
@@ -71,15 +88,8 @@ class TaskRepository {
   }
 
   static async getTaskByBoardId(boardId) {
-    const saved = localStorage.getItem(this.storageKey);
-
-    if (!saved) {
-      const defaultTask = await TaskOperations.getDefaultTasks();
-      localStorage.setItem(this.storageKey, JSON.stringify(defaultTask));
-      return defaultTask;
-    }
-
-    const items = JSON.parse(saved);
+    // Use getTask() to ensure initialization happens only once
+    const items = await this.getTask();
 
     return items.filter(item => {            
       return !item.boards || item.boards.length === 0 || item.boards.includes(boardId)

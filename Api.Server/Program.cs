@@ -7,7 +7,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
-builder.Services.AddSingleton<Api.Server.Services.DefaultTasksCacheService>();
+builder.Services.AddMemoryCache();
+builder.Services.AddScoped<Api.Server.Repositories.DefaultTasksRepository>();
 builder.Services.AddScoped<Api.Server.Services.DefaultTasksService>();
 
 var app = builder.Build();

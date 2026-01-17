@@ -15,7 +15,9 @@ const ToDoListContainer = () => {
     return computedBoardId;
   }, [paramBoardId]);
   
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState([]);  
+
+  const [lastDeletedTask, setLastDeletedTask] = useState();
 
   const [editId, setEditId] = useState(null);
   const [newItem, setNewItem] = useState('');  
@@ -47,6 +49,7 @@ const ToDoListContainer = () => {
       return;
     }
     setAlertOpen(false);
+    setLastDeletedTask(null); // Clear when alert closes
   };
 
   const handleAddNewItem = async (indexToInsert) => {
@@ -80,9 +83,24 @@ const ToDoListContainer = () => {
 
   const handleDeleteItem = async (id) => {
     const newList = items.filter(item => item.id !== id);
+    const deletedTask = items.find(item => item.id === id);
+
+    setLastDeletedTask(deletedTask);
+
     setItems(newList);
     await TaskRepository.delete(id);
     setAlertOpen(true);
+  };
+
+  const handleRestoreTask = async () => {
+    if (lastDeletedTask) {
+      const restoredTask = { ...lastDeletedTask, boards: [boardId] };
+      const newList = [...items, restoredTask];
+      setItems(newList);
+      await TaskRepository.mergeAndSave(newList);
+      setLastDeletedTask(null);
+      setAlertOpen(false);
+    }
   };
 
   const reorderItems = async (draggedIndex, index, items) => {
@@ -116,7 +134,7 @@ const ToDoListContainer = () => {
         alertOpen={alertOpen} handleAlertClose={handleAlertClose}
         handleAddNewItem={handleAddNewItem} handleEditChange={handleEditChange}
         handleDeleteItem={handleDeleteItem} reorderItems={reorderItems}
-        openTaskDetailsPopup={openTaskDetailsPopup} />
+        openTaskDetailsPopup={openTaskDetailsPopup} deletedTask={lastDeletedTask} handleRestoreTask={handleRestoreTask} />
       {itemPopupId !== null && popupItem !== null && 
         <TaskDetailsPopup item={popupItem}
           handleClose={itemPopupClose} loadTasks={loadTasks} />

@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
 import React, { useRef } from 'react';
-import { TextField, List, ListItem, IconButton, Typography, Alert, Snackbar, useTheme } from '@mui/material';
+import { TextField, List, ListItem, IconButton, Typography, Alert, Snackbar, useTheme, Button } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import EastIcon from '@mui/icons-material/East';
 
 const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, handleAlertClose,
-  handleAddNewItem, handleEditChange, handleDeleteItem, reorderItems, openTaskDetailsPopup }) => {  
+  handleAddNewItem, handleEditChange, handleDeleteItem, reorderItems, openTaskDetailsPopup, deletedTask, handleRestoreTask }) => {  
   const listRef = useRef(null);
   const theme = useTheme();
     
@@ -157,11 +157,21 @@ const ToDoList = ({ items, editId, setEditId, newItem, setNewItem, alertOpen, ha
 
     <Snackbar
       open={alertOpen}
-      autoHideDuration={3000}
+      autoHideDuration={5000}
       onClose={handleAlertClose}
     >
-      <Alert onClose={handleAlertClose} severity="success">
-        Well done you have just closed a task!
+      <Alert 
+        onClose={handleAlertClose} 
+        severity="success"
+        action={
+          deletedTask && (
+            <Button color="inherit" size="small" onClick={handleRestoreTask}>
+              UNDO
+            </Button>
+          )
+        }
+      >
+        Well done you have just closed "{deletedTask?.title || 'a task'}!
       </Alert>
     </Snackbar>
     </>

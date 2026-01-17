@@ -1,9 +1,10 @@
 import React from 'react';
-import { Button, Box, Typography, Paper, Stack, useTheme, useMediaQuery } from '@mui/material';
-import { UploadFile, Download, Dashboard } from '@mui/icons-material';
+import { Button, Box, Typography, Paper, Stack, useTheme, useMediaQuery, Divider } from '@mui/material';
+import { UploadFile, Download, Dashboard, Info } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
 import ConfigurationRepository from '../repositories/ConfigurationRepository';
+import packageJson from '../../../package.json';
 
 const ConfigurationContainer = () => {    
   const theme = useTheme();
@@ -66,7 +67,7 @@ const ConfigurationContainer = () => {
         </Stack>
       </Paper>      
 
-      <Paper elevation={2} sx={{ p: { xs: 2, sm: 3 } }}>
+      <Paper elevation={2} sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
         <Typography variant="h6" gutterBottom>
           Navigation
         </Typography>
@@ -84,6 +85,24 @@ const ConfigurationContainer = () => {
         >
           Go to Boards
         </Button>
+      </Paper>
+
+      <Paper elevation={2} sx={{ p: { xs: 2, sm: 3 } }}>
+        <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Info fontSize="small" />
+          About
+        </Typography>
+        <Divider sx={{ my: 2 }} />
+        <Stack spacing={1}>
+          <Box>
+            <Typography variant="body2" color="text.secondary">
+              Application Version
+            </Typography>
+            <Typography variant="body1" fontWeight="medium">
+              {packageJson.version}
+            </Typography>
+          </Box>          
+        </Stack>
       </Paper>
     </Box>     
   );

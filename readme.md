@@ -95,3 +95,9 @@ Highlights
 - Added rollback/undo functionality for deleted tasks with a snackbar notification
 - Task deletion now shows the specific task name in the success message
 - Users can restore recently deleted tasks using the UNDO button in the alert
+
+### v1.1.1 – 2025-01-17
+Highlights
+- Added version display in the Configuration section
+- Updated package.json version to 1.0.0
+- Users can now view the application version in the About section of the Configuration page

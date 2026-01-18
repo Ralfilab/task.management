@@ -101,3 +101,14 @@ Highlights
 - Added version display in the Configuration section
 - Updated package.json version to 1.0.0
 - Users can now view the application version in the About section of the Configuration page
+
+### v1.2.0 – 2025-01-XX
+Highlights
+- Added Ollama AI integration for intelligent task management advice
+- Periodic AI suggestions: The system automatically analyzes tasks and provides productivity advice every hour
+- Smart task selection: AI focuses on a random subset of tasks (up to 4) for more targeted, actionable advice
+- Enhanced task context: AI considers task urgency, due dates, and descriptions when providing suggestions
+- Configuration page: New Ollama settings section with enable/disable toggle, base URL configuration, and model selection
+- Connection testing: Test button to verify Ollama connectivity before enabling periodic checks
+- Error handling: User-friendly notifications for connection errors and timeouts
+- Last run tracking: Displays timestamp of the last AI advice check in the configuration page

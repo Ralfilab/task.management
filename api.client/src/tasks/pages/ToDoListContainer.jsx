@@ -5,6 +5,7 @@ import TaskRepository from '../repositories/TaskRepository'
 import TaskOperations from '../operations/TaskOperations'
 import { useParams } from "react-router-dom";
 import BoardRepository from '../../boards/repositories/BoardRepository';
+import OllamaIntegration from '../../ollama/components/OllamaIntegration';
 
 const ToDoListContainer = () => {      
   const { boardId: paramBoardId } = useParams();  
@@ -130,6 +131,7 @@ const ToDoListContainer = () => {
 
   return (
     <>      
+      <OllamaIntegration boardId={boardId} />
       <ToDoList items={items} editId={editId} setEditId={setEditId} newItem={newItem} setNewItem={setNewItem}
         alertOpen={alertOpen} handleAlertClose={handleAlertClose}
         handleAddNewItem={handleAddNewItem} handleEditChange={handleEditChange}

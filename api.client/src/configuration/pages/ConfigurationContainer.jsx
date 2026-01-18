@@ -1,23 +1,79 @@
-import React from 'react';
-import { Button, Box, Typography, Paper, Stack, useTheme, useMediaQuery, Divider } from '@mui/material';
-import { UploadFile, Download, Dashboard, Info } from '@mui/icons-material';
+import React, { useState, useEffect } from 'react';
+import { Button, Box, Typography, Paper, Stack, useTheme, useMediaQuery, Divider, TextField, FormControlLabel, Checkbox, Alert } from '@mui/material';
+import { UploadFile, Download, Dashboard, Info, SmartToy } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+import { useNotifications } from '@toolpad/core/useNotifications';
 
 import ConfigurationRepository from '../repositories/ConfigurationRepository';
+import OllamaConfigurationRepository from '../../ollama/repositories/OllamaConfigurationRepository';
+import OllamaService from '../../ollama/services/OllamaService';
+import TaskRepository from '../../tasks/repositories/TaskRepository';
 import packageJson from '../../../package.json';
 
 const ConfigurationContainer = () => {    
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));  
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const notifications = useNotifications();
   
+  const [ollamaConfig, setOllamaConfig] = useState(() => OllamaConfigurationRepository.get());
+  const [testingConnection, setTestingConnection] = useState(false);
+  const [connectionError, setConnectionError] = useState(null);
+
+  useEffect(() => {
+    // Reload config when it changes
+    setOllamaConfig(OllamaConfigurationRepository.get());
+  }, []);
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        ConfigurationRepository.importAllData(e.target.result);                
+        ConfigurationRepository.importAllData(e.target.result);
+        // Reload Ollama config after import
+        setOllamaConfig(OllamaConfigurationRepository.get());
       };
       reader.readAsText(file);
+    }
+  };
+
+  const handleOllamaConfigChange = (field, value) => {
+    const newConfig = { ...ollamaConfig, [field]: value };
+    OllamaConfigurationRepository.save(newConfig);
+    setOllamaConfig(newConfig);
+    setConnectionError(null);
+  };
+
+  const handleTestConnection = async () => {
+    setTestingConnection(true);
+    setConnectionError(null);
+
+    try {
+      // Get a sample task to test with
+      const tasks = await TaskRepository.getTask();
+      const testTasks = tasks.slice(0, 3); // Use first 3 tasks for testing
+      
+      if (testTasks.length === 0) {
+        // Create a dummy task for testing
+        const dummyTasks = [{ id: 'test', title: 'Test task', completeBy: null }];
+        await OllamaService.getTaskAdvice(dummyTasks);
+      } else {
+        await OllamaService.getTaskAdvice(testTasks);
+      }
+
+      notifications.show('Successfully connected to Ollama!', {
+        severity: 'success',
+        autoHideDuration: 5000,
+      });
+    } catch (error) {
+      const errorMessage = error.message || 'Failed to connect to Ollama';
+      setConnectionError(errorMessage);
+      notifications.show(`Ollama Connection Error: ${errorMessage}`, {
+        severity: 'error',
+        autoHideDuration: 8000,
+      });
+    } finally {
+      setTestingConnection(false);
     }
   };
 
@@ -64,6 +120,76 @@ const ConfigurationContainer = () => {
           >
             Export Data
           </Button>
+        </Stack>
+      </Paper>
+
+      <Paper elevation={2} sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
+        <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <SmartToy fontSize="small" />
+          Ollama AI Integration
+        </Typography>
+        <Typography variant="body2" color="text.secondary" paragraph>
+          Enable AI-powered task management suggestions using Ollama. The system will periodically analyze your tasks and provide advice.
+        </Typography>
+        <Stack spacing={2}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={ollamaConfig.enabled || false}
+                onChange={(e) => handleOllamaConfigChange('enabled', e.target.checked)}
+              />
+            }
+            label="Enable Ollama Integration"
+          />
+          
+          {ollamaConfig.enabled && (
+            <>
+              <TextField
+                fullWidth
+                label="Ollama Base URL"
+                value={ollamaConfig.baseUrl || 'http://localhost:11434'}
+                onChange={(e) => handleOllamaConfigChange('baseUrl', e.target.value)}
+                helperText="The URL where Ollama is running (default: http://localhost:11434)"
+                disabled={testingConnection}
+              />
+              
+              <TextField
+                fullWidth
+                label="Model Name"
+                value={ollamaConfig.model || 'gemma3:1b'}
+                onChange={(e) => handleOllamaConfigChange('model', e.target.value)}
+                helperText="The Ollama model to use (default: gemma3:1b)"
+                disabled={testingConnection}
+              />
+
+              {ollamaConfig.lastRun && (
+                <Box>
+                  <Typography variant="body2" color="text.secondary">
+                    Last advice check:
+                  </Typography>
+                  <Typography variant="body2">
+                    {new Date(ollamaConfig.lastRun).toLocaleString()}
+                  </Typography>
+                </Box>
+              )}
+
+              {connectionError && (
+                <Alert severity="error" onClose={() => setConnectionError(null)}>
+                  {connectionError}
+                </Alert>
+              )}
+
+              <Button
+                variant="outlined"
+                onClick={handleTestConnection}
+                disabled={testingConnection}
+                fullWidth={isMobile}
+                sx={{ minWidth: { xs: '100%', sm: 200 } }}
+              >
+                {testingConnection ? 'Testing Connection...' : 'Test Connection'}
+              </Button>
+            </>
+          )}
         </Stack>
       </Paper>      
 

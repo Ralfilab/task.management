@@ -58,8 +58,8 @@ class OllamaService {
       throw new Error('Ollama is not enabled');
     }
 
-    // Select a random subset of tasks (3-5 tasks)
-    const selectedTasks = this.selectRandomTasks(tasks, 4);
+    // Select a random subset of tasks
+    const selectedTasks = this.selectRandomTasks(tasks, 1);
     
     // Format selected tasks for the prompt
     const taskList = selectedTasks.map((task, index) => 
@@ -69,20 +69,20 @@ class OllamaService {
     const taskCount = selectedTasks.length;
     const totalCount = tasks.length;
     const contextNote = totalCount > taskCount 
-      ? `Note: You are analyzing ${taskCount} randomly selected tasks from a total of ${totalCount} tasks.`
+      ? `Note: You are analyzing ${taskCount} randomly selected task from a total of ${totalCount} tasks.`
       : '';
 
-    const prompt = `You are a productivity assistant. Analyze these specific tasks and provide focused, actionable advice:
+    const prompt = `You are a productivity assistant. Analyze these specific task and provide focused, actionable advice:
 
 ${taskList}
 
 ${contextNote}
 
 Instructions:
-- Focus ONLY on these ${taskCount} tasks listed above
+- Focus ONLY on this ${taskCount} task above
 - Provide specific, actionable advice (what to do, how to prioritize, or time management tips)
 - Consider urgency based on due dates
-- Keep response concise: 2-3 sentences, maximum 200 characters, no line breaks
+- Keep response concise: 2-3 sentences, maximum 100 characters, no line breaks
 - Be direct and practical
 
 Your advice:`;

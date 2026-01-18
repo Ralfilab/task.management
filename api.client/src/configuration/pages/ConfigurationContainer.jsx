@@ -131,6 +131,35 @@ const ConfigurationContainer = () => {
         <Typography variant="body2" color="text.secondary" paragraph>
           Enable AI-powered task management suggestions using Ollama. The system will periodically analyze your tasks and provide advice.
         </Typography>
+        <Alert severity="info" sx={{ mb: 2 }}>
+          <Typography variant="body2" component="div">
+            <strong>Important:</strong> To access local Ollama from this website, you must enable CORS in Ollama. 
+            Otherwise, you will get a CORS error.
+            <Box component="ul" sx={{ mt: 1, mb: 0, pl: 2 }}>
+              <li>
+                <Typography variant="body2" component="span">
+                  Read the documentation:{' '}
+                  <a 
+                    href="https://docs.ollama.com/faq#how-can-i-allow-additional-web-origins-to-access-ollama" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{ color: 'inherit', textDecoration: 'underline' }}
+                  >
+                    How to allow additional web origins
+                  </a>
+                </Typography>
+              </li>
+              <li>
+                <Typography variant="body2" component="span">
+                  Or run this PowerShell command (Windows):{' '}
+                  <Box component="code" sx={{ bgcolor: 'rgba(0, 0, 0, 0.05)', px: 0.5, borderRadius: 0.5, fontFamily: 'monospace', fontSize: '0.875rem' }}>
+                    $env:OLLAMA_ORIGINS="https://localtasklist.com"
+                  </Box>
+                </Typography>
+              </li>
+            </Box>
+          </Typography>
+        </Alert>
         <Stack spacing={2}>
           <FormControlLabel
             control={

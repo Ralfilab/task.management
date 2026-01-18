@@ -102,7 +102,7 @@ Highlights
 - Updated package.json version to 1.0.0
 - Users can now view the application version in the About section of the Configuration page
 
-### v1.2.0 – 2025-01-XX
+### v1.2.0 – 2025-01-18
 Highlights
 - Added Ollama AI integration for intelligent task management advice
 - Periodic AI suggestions: The system automatically analyzes tasks and provides productivity advice every hour
@@ -112,3 +112,10 @@ Highlights
 - Connection testing: Test button to verify Ollama connectivity before enabling periodic checks
 - Error handling: User-friendly notifications for connection errors and timeouts
 - Last run tracking: Displays timestamp of the last AI advice check in the configuration page
+
+### v1.2.1 – 2025-01-18
+Highlights
+- Improved AI task analysis: Changed to focus on a single random task per advice session for more concentrated, actionable suggestions
+- Optimized AI response length: Reduced maximum response length to 100 characters for more concise, focused advice
+- CORS configuration help: Added informational alert in Ollama settings explaining how to enable CORS for local Ollama access
+- Enhanced user guidance: Included documentation link and PowerShell command example for configuring OLLAMA_ORIGINS environment variable

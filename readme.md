@@ -119,3 +119,9 @@ Highlights
 - Optimized AI response length: Reduced maximum response length to 100 characters for more concise, focused advice
 - CORS configuration help: Added informational alert in Ollama settings explaining how to enable CORS for local Ollama access
 - Enhanced user guidance: Included documentation link and PowerShell command example for configuring OLLAMA_ORIGINS environment variable
+
+### v1.3.0 – 2025-01-19
+Highlights
+- Ollama advice now analyzes **all tasks** in the selected board instead of a random subset, for more complete guidance
+- Advice is displayed in a **Toolpad Core-based MUI dialog** instead of transient notifications, making it easier to read and act on
+- Improved readability of AI responses with support for **multi-line advice** and cleaner formatting in the dialog

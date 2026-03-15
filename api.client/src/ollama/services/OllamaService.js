@@ -2,22 +2,6 @@ import OllamaConfigurationRepository from '../repositories/OllamaConfigurationRe
 
 class OllamaService {
   /**
-   * Randomly selects a subset of tasks from the given list
-   * @param {Array} tasks - Array of task objects
-   * @param {number} maxTasks - Maximum number of tasks to select (default: 4)
-   * @returns {Array} Randomly selected subset of tasks
-   */
-  static selectRandomTasks(tasks, maxTasks = 4) {
-    if (tasks.length <= maxTasks) {
-      return tasks;
-    }
-    
-    // Create a shuffled copy of the array
-    const shuffled = [...tasks].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, maxTasks);
-  }
-
-  /**
    * Formats a task for display in the prompt
    * @param {Object} task - Task object
    * @param {number} index - Index in the list
@@ -58,31 +42,21 @@ class OllamaService {
       throw new Error('Ollama is not enabled');
     }
 
-    // Select a random subset of tasks
-    const selectedTasks = this.selectRandomTasks(tasks, 1);
-    
-    // Format selected tasks for the prompt
-    const taskList = selectedTasks.map((task, index) => 
+    // Format all tasks for the prompt
+    const taskList = tasks.map((task, index) => 
       this.formatTask(task, index + 1)
-    ).join('\n');
+    ).join('\n');    
 
-    const taskCount = selectedTasks.length;
-    const totalCount = tasks.length;
-    const contextNote = totalCount > taskCount 
-      ? `Note: You are analyzing ${taskCount} randomly selected task from a total of ${totalCount} tasks.`
-      : '';
-
-    const prompt = `You are a productivity assistant. Analyze these specific task and provide focused, actionable advice:
+    const prompt = `You are a productivity assistant. Analyze these tasks and provide focused, actionable advice:
 
 ${taskList}
 
-${contextNote}
-
 Instructions:
-- Focus ONLY on this ${taskCount} task above
-- Provide specific, actionable advice (what to do, how to prioritize, or time management tips)
+- Focus ONLY on these tasks above
+- Tasks are already prioritized by the user, so don't prioritize them again.
+- Provide specific, actionable advice (what to do, or how to manage your time)
 - Consider urgency based on due dates
-- Keep response concise: 2-3 sentences, maximum 100 characters, no line breaks
+- Keep response concise: 2-3 sentences, maximum 100 characters
 - Be direct and practical
 
 Your advice:`;
@@ -90,7 +64,7 @@ Your advice:`;
     try {
       // Create AbortController for timeout
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 120000); // 120 second timeout
 
       const response = await fetch(`${config.baseUrl}/api/chat`, {
         method: 'POST',
